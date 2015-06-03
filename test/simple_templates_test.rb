@@ -81,6 +81,12 @@ describe SimpleTemplates do
         errors.must_equal([SimpleTemplates::ParsingError.new(:misformatted_placeholder, 1, "bad placeholder>")])
         errors.first.message.must_equal('Misformatted placeholder at pos: 1, rest: "bad placeholder>"')
       end
+
+      it "adds errors about usage of placeholders that are not whitelisted" do
+        errors = SimpleTemplates.new("<name> is <age> years old", %w[name]).errors
+        errors.must_equal([SimpleTemplates::ParsingError.new(:invalid_placeholder, 11, "age> years old")])
+        errors.first.message.must_equal('Invalid placeholder is used at pos: 11, rest: "age> years old"')
+      end
     end
   end
 

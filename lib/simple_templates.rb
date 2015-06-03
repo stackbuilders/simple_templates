@@ -4,7 +4,8 @@ class SimpleTemplates
   ERROR_MESSAGES = {
     unclosed_placeholder: "Unclosed placeholder",
     unescaped_bracket: "Unescaped bracket",
-    misformatted_placeholder: "Misformatted placeholder"
+    misformatted_placeholder: "Misformatted placeholder",
+    invalid_placeholder: "Invalid placeholder is used"
   }
 
   ParsingError = Struct.new(:error_code, :pos, :rest) do
@@ -16,10 +17,11 @@ class SimpleTemplates
   TEXT_UNTIL_BRACKET = /(\\<|\\>|[^<>])*(<|>|\z)/
   TEXT_UNTIL_END_BRACKET = /(\\<|\\>|[^<>])*(>|\z)/
 
-  attr_reader :template, :tokens, :errors
+  attr_reader :template, :tokens, :errors, :allowed_placeholders
 
-  def initialize(template)
+  def initialize(template, allowed_placeholders=nil)
     @template = template
+    @allowed_placeholders = allowed_placeholders
     tokenize!
   end
 
@@ -65,7 +67,12 @@ class SimpleTemplates
     placeholder_name = scanner.scan(TEXT_UNTIL_END_BRACKET)
     case placeholder_name
     when /\A\w+>\z/
-      @tokens << [:name, placeholder_name[0..-2]]
+      placeholder_name = placeholder_name[0..-2]
+
+      @tokens << [:name, placeholder_name]
+      if allowed_placeholders && !allowed_placeholders.include?(placeholder_name)
+        @errors << ParsingError.new(:invalid_placeholder, starting_position, starting_remainder)
+      end
     when /\A[^\\]*>\z/
       @errors << ParsingError.new(:misformatted_placeholder, starting_position, starting_remainder)
     else
