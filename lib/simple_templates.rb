@@ -11,7 +11,7 @@ class SimpleTemplates
     end
   end
 
-  attr_reader :compiled, :template
+  attr_reader :template, :tokens
 
   def initialize(template)
     @template = template
@@ -19,8 +19,7 @@ class SimpleTemplates
   end
 
   def tokenize!
-    return @compiled if @compiled
-    @compiled = []
+    @tokens = []
     text__tag_reg = /(.*?)(<|\z)+/m
     start_tag_reg = /(.*?)(<)+/m
     end___tag_reg = /(.*?)>/m
@@ -31,27 +30,27 @@ class SimpleTemplates
       string = match && match[0..-2]
       case match
       when start_tag_reg
-        @compiled << [:string, string] unless string.empty?
+        @tokens << [:string, string] unless string.empty?
         started = true
       when end___tag_reg
-        @compiled << [:name, string.to_sym] unless string.empty?
+        @tokens << [:name, string] unless string.empty?
         started = false
       when text__tag_reg
-        @compiled << [:string, match] unless match.empty?
+        @tokens << [:string, match] unless match.empty?
       else
         raise UnterminatedString.new scanner.pos, scanner.rest
       end
     end
-    @compiled
+    @tokens
   end
 
-  def result(object)
-    compiled.map do |type, value|
+  def render(context)
+    tokens.map do |type, value|
       case type
       when :string then value
-      when :name   then object.public_send(value)
+      when :name   then context.public_send(value)
       end
-    end.join("")
+    end.join
   end
 
 end
