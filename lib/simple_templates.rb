@@ -1,57 +1,82 @@
 require "strscan"
 
 class SimpleTemplates
+  ERROR_MESSAGES = {
+    unclosed_placeholder: "Unclosed placeholder",
+    unescaped_bracket: "Unescaped bracket",
+    misformatted_placeholder: "Misformatted placeholder",
+    invalid_placeholder: "Invalid placeholder is used"
+  }
 
-  class UnterminatedString < StandardError
-    attr_reader :pos, :rest
-    def initialize(pos, rest)
-      @pos  = pos
-      @rest = rest
-      super("Unterminated string(at: #{pos}): #{rest}")
+  ParsingError = Struct.new(:error_code, :pos, :rest) do
+    def message
+      %(#{ERROR_MESSAGES.fetch(error_code)} at pos: #{pos}, rest: "#{rest[0..15]}")
     end
   end
 
-  attr_reader :compiled, :template
+  TEXT_UNTIL_BRACKET = /(\\<|\\>|[^<>])*(<|>|\z)/
+  TEXT_UNTIL_END_BRACKET = /(\\<|\\>|[^<>])*(>|\z)/
 
-  def initialize(template)
+  attr_reader :template, :tokens, :errors, :allowed_placeholders
+
+  def initialize(template, allowed_placeholders=nil)
     @template = template
+    @allowed_placeholders = allowed_placeholders
     tokenize!
   end
 
   def tokenize!
-    return @compiled if @compiled
-    @compiled = []
-    text__tag_reg = /(.*?)(<|\z)+/m
-    start_tag_reg = /(.*?)(<)+/m
-    end___tag_reg = /(.*?)>/m
-    started = false
+    @tokens = []
+    @errors = []
+
     scanner = StringScanner.new(template)
     until scanner.eos?
-      match  = scanner.scan(started ? end___tag_reg : text__tag_reg)
-      string = match && match[0..-2]
-      case match
-      when start_tag_reg
-        @compiled << [:string, string] unless string.empty?
-        started = true
-      when end___tag_reg
-        @compiled << [:name, string.to_sym] unless string.empty?
-        started = false
-      when text__tag_reg
-        @compiled << [:string, match] unless match.empty?
+      match = scanner.scan(TEXT_UNTIL_BRACKET)
+      if match.end_with?('<')
+        text = match[0..-2]
+        @tokens << [:string, unescape(text)] unless text.empty?
+
+        scan_placeholder(scanner)
+      elsif match.end_with?('>')
+        @errors << ParsingError.new(:unescaped_bracket, scanner.pos, scanner.rest)
       else
-        raise UnterminatedString.new scanner.pos, scanner.rest
+        @tokens << [:string, unescape(match)] unless match.empty?
       end
     end
-    @compiled
   end
 
-  def result(object)
-    compiled.map do |type, value|
+  def render(context)
+    tokens.map do |type, value|
       case type
       when :string then value
-      when :name   then object.public_send(value)
+      when :name   then context.public_send(value)
       end
-    end.join("")
+    end.join
   end
 
+  private
+
+  def unescape(text)
+    text.gsub('\<', '<').gsub('\>', '>')
+  end
+
+  def scan_placeholder(scanner)
+    starting_position = scanner.pos
+    starting_remainder = scanner.rest
+
+    placeholder_name = scanner.scan(TEXT_UNTIL_END_BRACKET)
+    case placeholder_name
+    when /\A\w+>\z/
+      placeholder_name = placeholder_name[0..-2]
+
+      @tokens << [:name, placeholder_name]
+      if allowed_placeholders && !allowed_placeholders.include?(placeholder_name)
+        @errors << ParsingError.new(:invalid_placeholder, starting_position, starting_remainder)
+      end
+    when /\A[^\\]*>\z/
+      @errors << ParsingError.new(:misformatted_placeholder, starting_position, starting_remainder)
+    else
+      @errors << ParsingError.new(:unclosed_placeholder, starting_position, starting_remainder)
+    end
+  end
 end
