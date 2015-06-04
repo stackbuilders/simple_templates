@@ -1,3 +1,5 @@
+require 'set'
+
 module SimpleTemplates
 
   # Parsing the SimpleTemplate means verifying the *syntax* and *semantics* of
@@ -17,12 +19,42 @@ module SimpleTemplates
 
     def initialize(raw_template, whitelisted_placeholders)
       @tokens                   = Lexer.new(raw_template).tokenize
-      @whitelisted_placeholders = whitelisted_placeholders
+      @whitelisted_placeholders = whitelisted_placeholders.to_set
     end
 
     # Returns either a stream of valid tokens (Placeholders and Strings),
     # or an Array containing one or more Errors.
     def parse
+      template_nodes = ast
+
+      # This section verifies the *semantics* of the token stream. In this case,
+      # all we care about is that the tokens are in the whitelist.
+      invalids = invalid_placeholders(template_nodes)
+      return invalid_placeholder_errors(invalids) unless invalids.empty?
+
+      template_nodes
+    end
+
+    # Returns all placeholder names used in the template, regardless of whether
+    # they're valid or not.
+    def placeholder_names
+      placeholders(ast).map(&:name).to_set
+    end
+
+    def valid_placeholder_names
+      placeholder_names & whitelisted_placeholders.to_set
+    end
+
+
+    private
+
+    attr_reader :whitelisted_placeholders, :tokens
+
+    def placeholders(template_nodes)
+      template_nodes.select{|node| node.is_a?(Placeholder) }.to_set
+    end
+
+    def ast
       toks = tokens.clone
 
       template_nodes = []
@@ -49,19 +81,7 @@ module SimpleTemplates
 
       # At this point we can do minor cleanup of our structure.
       template_nodes = compress_adjacent_text_nodes(template_nodes)
-
-      # This section verifies the *semantics* of the token stream. In this case,
-      # all we care about is that the tokens are in the whitelist.
-      invalids = invalid_placeholders(template_nodes)
-      return invalid_placeholder_errors(invalids) unless invalids.empty?
-
-      template_nodes
     end
-
-
-    private
-
-    attr_reader :whitelisted_placeholders, :tokens
 
     def invalid_placeholder_errors(invalid_pholders)
       invalid_pholders.map do |p|
@@ -71,9 +91,8 @@ module SimpleTemplates
 
     # Invalid placeholders are ones that are not explicitly whitelisted.
     def invalid_placeholders(template_nodes)
-      template_nodes.select do |tn|
-        tn.is_a?(Placeholder) && !whitelisted_placeholders.include?(tn.name)
-      end
+      placeholders(template_nodes).
+        select{|ph| !whitelisted_placeholders.include?(ph.name)}
     end
 
     def unescape(token)

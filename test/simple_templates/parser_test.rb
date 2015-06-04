@@ -1,6 +1,20 @@
 require_relative "../test_helper"
 
+require 'set'
+
 describe SimpleTemplates::Parser do
+  describe "#placeholder_names" do
+    it "should return a set of the placeholder names in the template" do
+      SimpleTemplates::Parser.new('foo <bar> <baz>', []).placeholder_names.must_equal ['bar', 'baz'].to_set
+    end
+  end
+
+  describe "#valid_placeholder_names" do
+    it "should return a set of the valid placeholder names in the template" do
+      SimpleTemplates::Parser.new('foo <bar> <baz>', ['baz']).valid_placeholder_names.must_equal ['baz'].to_set
+    end
+  end
+
   describe "#parse" do
     it "parses a simple valid template" do
       pholder = SimpleTemplates::Parser::Placeholder.new('bar', 4)
