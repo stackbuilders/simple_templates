@@ -129,9 +129,7 @@ module SimpleTemplates
 
     def compress_adjacent_text_nodes(template_nodes)
       template_nodes.reduce([]) do |compressed, node|
-        if !compressed.empty? &&
-          compressed.last.respond_to?(:+) && node.respond_to?(:+)
-
+        if compressed.last.respond_to?(:+) && node.respond_to?(:+)
           compressed[0..-2] << compressed[-1] + node
         else
           compressed << node
