@@ -16,8 +16,7 @@ module SimpleTemplates
     end
 
     def tokenize
-      tokens               = []
-      text, start_text_pos = '', 0
+      tokens = []
 
       until @ss.eos?
         tok = next_token
@@ -29,7 +28,7 @@ module SimpleTemplates
         end
       end
 
-      text.empty? ? tokens : tokens << Token.new(:text, text, start_text_pos)
+      tokens
     end
 
     private
