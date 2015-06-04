@@ -48,6 +48,12 @@ describe SimpleTemplates::Parser do
       ]
     end
 
+    it "returns an error when empty placeholder is found" do
+      SimpleTemplates::Parser.new('foo <>', ['bar']).parse.must_equal [
+        SimpleTemplates::Parser::Error.new("Expected text token at character position 5, but found a placeholder end token instead.")
+      ]
+    end
+
     it "returns an error when a closing tag is expected, but an opening tag is found" do
       SimpleTemplates::Parser.new('foo <bar<>', ['bar']).parse.must_equal [
         SimpleTemplates::Parser::Error.new("Expected placeholder end token at character position 8, but found a placeholder start token instead.")
