@@ -1,12 +1,13 @@
 require "strscan"
 
 require 'simple_templates/lexer'
+require 'simple_templates/placeholder_syntax'
 require 'simple_templates/parser'
 
 module SimpleTemplates
   def self.render(template, context, whitelisted_placeholders)
     nodes = Parser.new(template, whitelisted_placeholders).parse
-    
+
     if (nodes.any? && nodes.first.is_a?(Parser::Error))
       nodes
     else

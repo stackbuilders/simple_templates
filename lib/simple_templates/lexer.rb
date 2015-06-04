@@ -31,6 +31,7 @@ module SimpleTemplates
       tokens
     end
 
+
     private
 
     def next_token
