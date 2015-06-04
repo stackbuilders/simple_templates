@@ -63,6 +63,11 @@ describe SimpleTemplates do
       subject.tokens.must_equal([[:name, "name1"], [:string, ">> and 5 < 10. "], [:name, "name4"]])
     end
 
+    it "knows uniq used names" do
+      subject = SimpleTemplates.new("<name1> has <name2> and <name3> has <name4> and again <name1>")
+      subject.names.must_equal(%w(name1 name2 name3 name4))
+    end
+
     describe "validations" do
       it "adds an error about an unclosed placeholder" do
         errors = SimpleTemplates.new("<name").errors
@@ -106,5 +111,4 @@ describe SimpleTemplates do
       error.name.must_equal(:first_name)
     end
   end
-
 end
