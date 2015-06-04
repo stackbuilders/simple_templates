@@ -25,8 +25,6 @@ module SimpleTemplates
     Placeholder = Struct.new(:name, :pos)
     Error       = Struct.new(:message)
 
-    attr_reader :whitelisted_placeholders, :tokens
-
     def initialize(raw_template, whitelisted_placeholders)
       @tokens                   = Lexer.new(raw_template).tokenize
       @whitelisted_placeholders = whitelisted_placeholders
@@ -72,6 +70,8 @@ module SimpleTemplates
 
     private
 
+    attr_reader :whitelisted_placeholders, :tokens
+
     def invalid_placeholder_errors(invalid_pholders)
       invalid_pholders.map do |p|
         Error.new("Invalid placeholder with name, '#{p.name}' found starting at position #{p.pos}.")
@@ -102,8 +102,6 @@ module SimpleTemplates
     end
 
     class PlaceholderSyntax
-      attr_reader :tag_tokens
-
       # We take any sequence of three tokens to see if it's a valid Placeholder.
       # NB: this excludes placeholder names containing escaped sequences. If
       # that becomes necessary later, we'll have to change this approach.
@@ -142,6 +140,9 @@ module SimpleTemplates
       end
 
       private
+
+      attr_reader :tag_tokens
+
       def tag_types
         tag_tokens.map(&:type)
       end
