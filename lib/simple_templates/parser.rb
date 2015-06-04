@@ -25,34 +25,24 @@ module SimpleTemplates
     # Returns either a stream of valid tokens (Placeholders and Strings),
     # or an Array containing one or more Errors.
     def parse
-      template_nodes = ast
+      template_nodes, errors = *ast
 
-      # This section verifies the *semantics* of the token stream. In this case,
-      # all we care about is that the tokens are in the whitelist.
-      invalids = invalid_placeholders(template_nodes)
-      return invalid_placeholder_errors(invalids) unless invalids.empty?
+      if errors.empty?
+        # This section verifies the *semantics* of the token stream. In this case,
+        # all we care about is that the tokens are in the whitelist.
+        Template.new(template_nodes, invalid_placeholder_errors(invalid_placeholders(template_nodes)))
+      else
 
-      template_nodes
-    end
-
-    # Returns all placeholder names used in the template, regardless of whether
-    # they're valid or not.
-    def placeholder_names
-      placeholders(ast).map(&:name).to_set
-    end
-
-    def valid_placeholder_names
-      placeholder_names & whitelisted_placeholders.to_set
+        # We found a syntax error, so return an invalid Tempalte with those
+        # errors.
+        Template.new(template_nodes, errors)
+      end
     end
 
 
     private
 
     attr_reader :whitelisted_placeholders, :tokens
-
-    def placeholders(template_nodes)
-      template_nodes.select{|node| node.is_a?(Placeholder) }.to_set
-    end
 
     def ast
       toks = tokens.clone
@@ -72,7 +62,7 @@ module SimpleTemplates
             # In this case there is a syntactical error, so we don't proceed to
             # do validation of placeholder names since we can't tell what they
             # are with invalid tag syntax! Just return the first syntax error.
-            return [res]
+            return [template_nodes, [res]]
           end
         else
           template_nodes << unescape(toks.shift)
@@ -80,7 +70,7 @@ module SimpleTemplates
       end
 
       # At this point we can do minor cleanup of our structure.
-      template_nodes = compress_adjacent_text_nodes(template_nodes)
+      [compress_adjacent_text_nodes(template_nodes), []]
     end
 
     def invalid_placeholder_errors(invalid_pholders)
@@ -95,6 +85,10 @@ module SimpleTemplates
         select{|ph| !whitelisted_placeholders.include?(ph.name)}
     end
 
+    def placeholders(template_nodes)
+      template_nodes.select{|node| node.is_a?(Placeholder) }.to_set
+    end
+
     def unescape(token)
       UNESCAPES[token.type] || token.content
     end
@@ -102,7 +96,7 @@ module SimpleTemplates
     def compress_adjacent_text_nodes(template_nodes)
       template_nodes.reduce([]) do |compressed, node|
         if !compressed.empty? &&
-          compressed.last.is_a?(String) && node.is_a?(String)
+          compressed.last.respond_to?(:+) && node.respond_to?(:+)
 
           compressed[0..-2] << compressed[-1] + node
         else
