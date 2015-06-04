@@ -58,11 +58,16 @@ module SimpleTemplates
       if errors.empty?
         # This section verifies the *semantics* of the token stream. In this case,
         # all we care about is that the tokens are in the whitelist.
-        Template.new(template_nodes, invalid_placeholder_errors(invalid_placeholders(template_nodes)))
+        Template.new(
+          template_nodes,
+          invalid_placeholder_errors(invalid_placeholders(template_nodes))
+        )
+
       else
 
-        # We found a syntax error, so return an invalid Tempalte with those
-        # errors.
+        # We found a syntax error - no need to do semantic analysis since we
+        # don't know what's going on, so just return an invalid Template with
+        # the syntax errors and any valid nodes we happened to pick up.
         Template.new(template_nodes, errors)
       end
     end
