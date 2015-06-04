@@ -4,8 +4,9 @@ require 'simple_templates/lexer'
 require 'simple_templates/parser'
 
 module SimpleTemplates
-  def self.render(template, context, placeholder_names)
-    nodes = Parser.new(template, placeholder_names).parse
+  def self.render(template, context, whitelisted_placeholders)
+    nodes = Parser.new(template, whitelisted_placeholders).parse
+    
     if (nodes.any? && nodes.first.is_a?(Parser::Error))
       nodes
     else
