@@ -54,6 +54,10 @@ class SimpleTemplates
     end.join
   end
 
+  def names
+    tokens.select { |type, _| type == :name }.map { |_, value| value }.uniq
+  end
+
   private
 
   def unescape(text)
