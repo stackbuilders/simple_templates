@@ -1,5 +1,4 @@
 require_relative "../test_helper"
-require_relative "../../lib/simple_templates"
 
 describe SimpleTemplates::Parser do
   describe "#parse" do

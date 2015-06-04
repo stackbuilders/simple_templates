@@ -19,7 +19,7 @@ module SimpleTemplates
     # NB: this excludes placeholder names containing escaped sequences. If
     # that becomes necessary later, we'll have to change this approach.
     def initialize(toks)
-      @tag_tokens = toks[0..2].compact
+      @tag_start, @tag_name, @tag_end = @tag_tokens = toks[0..2].compact
     end
 
     # If this token sequence starts with a placeholder tag, we can verify
@@ -53,14 +53,10 @@ module SimpleTemplates
 
     private
 
-    attr_reader :tag_tokens
+    attr_reader :tag_tokens, :tag_start, :tag_name, :tag_end
 
     def tag_types
       tag_tokens.map(&:type)
     end
-
-    def tag_start ; @tag_tokens[0] ; end
-    def tag_name  ; @tag_tokens[1] ; end
-    def tag_end   ; @tag_tokens[2] ; end
   end
 end

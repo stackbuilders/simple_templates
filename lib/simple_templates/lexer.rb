@@ -21,7 +21,7 @@ module SimpleTemplates
       until @ss.eos?
         tok = next_token
 
-        if !tokens.empty? && tok.type == :text && tokens.last.type == :text
+        if tokens.any? && tok.type == :text && tokens.last.type == :text
           tokens.last.content += tok.content
         else
           tokens << tok
