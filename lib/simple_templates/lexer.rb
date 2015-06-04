@@ -4,11 +4,13 @@ module SimpleTemplates
   class Lexer
     Token = Struct.new(:type, :content, :pos)
 
+
     TOKENS = {
       lt:        /\\</,
       gt:        /\\>/,
       ph_start:  /\</,
-      ph_end:    /\>/
+      ph_end:    /\>/,
+      text:      /./
     }.freeze
 
     def initialize(input)
@@ -35,15 +37,11 @@ module SimpleTemplates
     private
 
     def next_token
-      pos = @ss.pos
+      token_type, pattern = TOKENS.find { |_, pattern| @ss.check(pattern) }
 
-      TOKENS.each do |token_type, pattern|
-        if matched = @ss.scan(pattern)
-          return Token.new(token_type, matched, pos)
-        end
+      Token.new(token_type, @ss.matched, @ss.pos).tap do
+        @ss.pos += @ss.matched.length
       end
-
-      Token.new(:text, @ss.getch, pos)
     end
   end
 end
