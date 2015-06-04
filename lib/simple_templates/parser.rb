@@ -14,8 +14,36 @@ module SimpleTemplates
       gt:  '>',
     }.freeze
 
-    Placeholder = Struct.new(:name, :pos)
-    Error       = Struct.new(:message)
+    class Node
+      attr_reader :contents, :pos
+
+      def initialize(contents, pos)
+        @contents = contents
+        @pos      = pos
+      end
+
+      def render(context)
+        raise NotImplementedError
+      end
+    end
+
+    class Placeholder < Node
+      def render(context)
+        context.public_send(contents)
+      end
+    end
+
+    class Text < Node
+      def render(context)
+        contents
+      end
+
+      def +(other)
+        Text.new(contents + other.contents, pos)
+      end
+    end
+
+    Error = Struct.new(:message)
 
     def initialize(raw_template, whitelisted_placeholders)
       @tokens                   = Lexer.new(raw_template).tokenize
@@ -65,7 +93,8 @@ module SimpleTemplates
             return [template_nodes, [res]]
           end
         else
-          template_nodes << unescape(toks.shift)
+          next_text_node = toks.shift
+          template_nodes << Text.new(unescape(next_text_node), next_text_node.pos)
         end
       end
 
@@ -75,14 +104,14 @@ module SimpleTemplates
 
     def invalid_placeholder_errors(invalid_pholders)
       invalid_pholders.map do |p|
-        Error.new("Invalid placeholder with name, '#{p.name}' found starting at position #{p.pos}.")
+        Error.new("Invalid placeholder with name, '#{p.contents}' found starting at position #{p.pos}.")
       end
     end
 
     # Invalid placeholders are ones that are not explicitly whitelisted.
     def invalid_placeholders(template_nodes)
       placeholders(template_nodes).
-        select{|ph| !whitelisted_placeholders.include?(ph.name)}
+        select{|ph| !whitelisted_placeholders.include?(ph.contents)}
     end
 
     def placeholders(template_nodes)
