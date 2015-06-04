@@ -17,20 +17,16 @@ module SimpleTemplates
     end
 
     def tokenize
-      tokens = []
+      tokens               = []
       text, start_text_pos = '', 0
 
       until @ss.eos?
-        if tok = next_token
-          unless text.empty?
-            tokens << Token.new(:text, text, start_text_pos)
-            text = ''
-          end
+        tok = next_token
 
-          tokens << tok
+        if !tokens.empty? && tok.type == :text && tokens.last.type == :text
+          tokens.last.content += tok.content
         else
-          start_text_pos = @ss.pos if text.empty?
-          text += @ss.getch
+          tokens << tok
         end
       end
 
@@ -48,7 +44,7 @@ module SimpleTemplates
         end
       end
 
-      nil
+      Token.new(:text, @ss.getch, pos)
     end
   end
 end
