@@ -38,6 +38,14 @@ describe SimpleTemplates do
       ).must_equal "foo baz \<"
     end
 
+    it "interpolates a template containing an escaped escape character" do
+      SimpleTemplates.render(
+        "foo <bar> \\",
+        OpenStruct.new(bar: 'baz'),
+        ['bar']
+      ).must_equal "foo baz \\"
+    end
+
     it "raises an error when the template is invalid" do
       lambda {
         SimpleTemplates.render(

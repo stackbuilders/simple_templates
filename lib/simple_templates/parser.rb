@@ -10,7 +10,6 @@ module SimpleTemplates
     UNESCAPES = {
       lt:  '<',
       gt:  '>',
-      esc: '\\'
     }.freeze
 
     PH_TAGS = [:ph_start, :ph_end]
@@ -20,7 +19,6 @@ module SimpleTemplates
       ph_end:   'placeholder end',
       lt:       'less than',
       gt:       'greater than',
-      esc:      'escape',
       text:     'text'
     }.freeze
 

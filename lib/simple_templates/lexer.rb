@@ -7,7 +7,6 @@ module SimpleTemplates
     TOKENS = {
       lt:        /\\</,
       gt:        /\\>/,
-      esc:       /\\/,
       ph_start:  /\</,
       ph_end:    /\>/
     }.freeze
