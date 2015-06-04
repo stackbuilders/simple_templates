@@ -46,14 +46,12 @@ describe SimpleTemplates do
       ).must_equal "foo baz \\"
     end
 
-    it "raises an error when the template is invalid" do
-      lambda {
-        SimpleTemplates.render(
-          "foo < <bar>",
-          OpenStruct.new(bar: 'baz'),
-          ['bar']
-        ).must_equal "foo baz \<"
-      }.must_raise RuntimeError
+    it "returns a collection of Error nodes when the template is invalid" do
+      SimpleTemplates.render(
+        "foo < <bar>",
+        OpenStruct.new(bar: 'baz'),
+        ['bar']
+      ).must_equal [SimpleTemplates::Parser::Error.new("Expected placeholder end token at character position 6, but found a placeholder start token instead.")]
     end
   end
 end
