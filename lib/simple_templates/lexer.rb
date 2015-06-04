@@ -21,7 +21,7 @@ module SimpleTemplates
       text, start_text_pos = '', 0
 
       until @ss.eos?
-        if tok = next_token(@ss)
+        if tok = next_token
           unless text.empty?
             tokens << Token.new(:text, text, start_text_pos)
             text = ''
@@ -39,11 +39,11 @@ module SimpleTemplates
 
     private
 
-    def next_token(scanner)
-      pos = scanner.pos
+    def next_token
+      pos = @ss.pos
 
       TOKENS.each do |token_type, pattern|
-        if matched = scanner.scan(pattern)
+        if matched = @ss.scan(pattern)
           return Token.new(token_type, matched, pos)
         end
       end
