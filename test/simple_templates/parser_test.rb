@@ -32,6 +32,13 @@ describe SimpleTemplates::Parser do
       ])
     end
 
+    it "returns errors about invalid placeholders encountered before a syntactical error" do
+      SimpleTemplates::Parser.new('foo <baz> >', []).parse.must_equal SimpleTemplates::ParseResult.new(nil, [
+        SimpleTemplates::Parser::Error.new('Expected placeholder start token at character position 10, but found a placeholder end token instead.'),
+        SimpleTemplates::Parser::Error.new('Invalid placeholder with name, \'baz\' found starting at position 4.')
+      ])
+    end
+
     it "returns an error when an invalid placeholder name is found" do
       SimpleTemplates::Parser.new('foo <baz>', ['bar']).parse.must_equal SimpleTemplates::ParseResult.new(nil, [
         SimpleTemplates::Parser::Error.new("Invalid placeholder with name, 'baz' found starting at position 4.")
