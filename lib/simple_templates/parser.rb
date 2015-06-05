@@ -31,7 +31,6 @@ module SimpleTemplates
                       syntax_errors.concat(invalid_placeholder_errors))
     end
 
-
     private
 
     attr_reader :whitelisted_placeholders, :tokens

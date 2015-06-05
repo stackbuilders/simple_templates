@@ -50,7 +50,6 @@ module SimpleTemplates
       AST::Placeholder.new(tag_name.content, tag_start.pos)
     end
 
-
     private
 
     attr_reader :tag_tokens, :tag_start, :tag_name, :tag_end

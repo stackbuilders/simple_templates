@@ -7,7 +7,6 @@ module SimpleTemplates
   class Lexer
     Token = Struct.new(:type, :content, :pos)
 
-
     TOKENS = {
       lt:        /\\</,
       gt:        /\\>/,
@@ -35,7 +34,6 @@ module SimpleTemplates
 
       tokens
     end
-
 
     private
 
