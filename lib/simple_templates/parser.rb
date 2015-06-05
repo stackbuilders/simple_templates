@@ -116,7 +116,7 @@ module SimpleTemplates
     # Invalid placeholders are ones that are not explicitly whitelisted.
     def invalid_placeholders(template_nodes)
       placeholders(template_nodes).
-        select{|ph| !whitelisted_placeholders.include?(ph.contents)}
+        reject{|ph| whitelisted_placeholders.include?(ph.contents)}
     end
 
     def placeholders(template_nodes)
