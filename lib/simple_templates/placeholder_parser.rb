@@ -1,7 +1,7 @@
 module SimpleTemplates
 
   # Recognizes a set of input tokens as a Placeholder.
-  class PlaceholderSyntax
+  class PlaceholderParser
 
     PH_TAGS = [:ph_start, :ph_end]
 
@@ -34,25 +34,42 @@ module SimpleTemplates
       raise ArgumentError,
         "Stream does not contain any placeholder tags!" unless applicable?
 
-      expected_order_with_found_tokens = EXPECTED_TAG_ORDER.zip(@tag_tokens)
+      errors = check_placeholder_syntax
 
-      expected_order_with_found_tokens.each do |expected_type, found_tag|
-        if found_tag.nil?
-          return Parser::Error.new("Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token, but reached end of input.")
+      placeholder_ast = errors.empty? ?
+        [AST::Placeholder.new(tag_name.content, tag_start.pos)] : []
 
-        elsif expected_type != found_tag.type
-          return Parser::Error.new("Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token at character position #{found_tag.pos}, but found a #{FRIENDLY_TAG_NAMES.fetch(found_tag.type)} token instead.")
-
-        else # This token was expected at this point in the placeholder sequence.
-        end
-      end
-
-      AST::Placeholder.new(tag_name.content, tag_start.pos)
+      ParseResult.new(placeholder_ast, errors)
     end
 
     private
 
     attr_reader :tag_tokens, :tag_start, :tag_name, :tag_end
+
+    def check_placeholder_syntax
+      expected_order_with_found_tokens = EXPECTED_TAG_ORDER.zip(@tag_tokens)
+
+      errors = expected_order_with_found_tokens.
+                 reduce([]) do |errs, (expected_type, found_tag)|
+
+        if found_tag.nil?
+          break errs << Parser::Error.
+            new("Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} " +
+                 "token, but reached end of input.")
+
+        elsif expected_type != found_tag.type
+          break errs << Parser::Error.
+            new("Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token at" +
+                " character position #{found_tag.pos}, but found a " +
+                "#{FRIENDLY_TAG_NAMES.fetch(found_tag.type)} token instead.")
+
+        else
+          # This token was expected at this point in the placeholder sequence,
+          # no need to add errors.
+          errs
+        end
+      end
+    end
 
     def tag_types
       tag_tokens.map(&:type)

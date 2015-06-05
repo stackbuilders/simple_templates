@@ -51,19 +51,21 @@ module SimpleTemplates
 
       # This section strictly analyzes the *syntax* of the tokens.
       while toks.any?
-        ps = PlaceholderSyntax.new(toks)
+        ps = PlaceholderParser.new(toks)
 
         if ps.applicable?
-          case res = ps.placeholder
-          when AST::Placeholder
+          res = ps.placeholder
+          if res.success?
             toks = toks[3..-1] # pop off the tokens we just used.
-            template_nodes << res
+            template_nodes.concat(res.template)
+
           else
             # In this case there is a syntactical error, so we don't proceed to
             # do validation of placeholder names since we can't tell what they
             # are with invalid tag syntax! Just return the first syntax error.
-            errors << res
+            errors.concat(res.errors)
             break
+
           end
         else
           next_text_node = toks.shift
