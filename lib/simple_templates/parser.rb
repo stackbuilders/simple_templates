@@ -24,8 +24,8 @@ module SimpleTemplates
     # Returns either a stream of valid tokens (Placeholders and Strings),
     # or an Array containing one or more Errors.
     def parse
-      ast, syntax_errors              = *check_syntax
-      ast, invalid_placeholder_errors = *check_valid_placeholders(ast)
+      ast, syntax_errors         = *check_syntax
+      invalid_placeholder_errors = *check_valid_placeholders(ast)
 
       ParseResult.new(Template.new(ast),
                       syntax_errors.concat(invalid_placeholder_errors))
@@ -38,9 +38,7 @@ module SimpleTemplates
     # This section verifies the *semantics* of the token stream. In this case,
     # all we care about is that the tokens are in the whitelist.
     def check_valid_placeholders(ast)
-      invalid_ph_msgs = invalid_placeholder_errors(invalid_placeholders(ast))
-
-      [ast, invalid_ph_msgs]
+      invalid_placeholder_errors(invalid_placeholders(ast))
     end
 
     def check_syntax
@@ -60,9 +58,8 @@ module SimpleTemplates
             template_nodes.concat(res.template)
 
           else
-            # In this case there is a syntactical error, so we don't proceed to
-            # do validation of placeholder names since we can't tell what they
-            # are with invalid tag syntax! Just return the first syntax error.
+            # Once we get a syntax error, we can't really determine if anything
+            # else is broken syntactically, so return with the first Error.
             errors.concat(res.errors)
             break
 
