@@ -91,7 +91,7 @@ module SimpleTemplates
     end
 
     def placeholders(template_nodes)
-      template_nodes.select{|node| node.is_a?(AST::Placeholder) }.to_set
+      template_nodes.select{|node| node.placeholder? }.to_set
     end
 
     def unescape(token)
@@ -100,7 +100,7 @@ module SimpleTemplates
 
     def compress_adjacent_text_nodes(template_nodes)
       template_nodes.reduce([]) do |compressed, node|
-        if compressed.last.respond_to?(:+) && node.respond_to?(:+)
+        if !compressed.empty? && compressed.last.text? && node.text?
           compressed[0..-2] << compressed[-1] + node
         else
           compressed << node

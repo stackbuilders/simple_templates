@@ -15,6 +15,14 @@ module SimpleTemplates
       def ==(other)
         contents == other.contents && pos == other.pos
       end
+
+      def placeholder?
+        raise NotImplementedError
+      end
+
+      def text?
+        raise NotImplementedError
+      end
     end
   end
 end

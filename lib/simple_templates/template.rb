@@ -25,7 +25,7 @@ module SimpleTemplates
     private
 
     def placeholders(template_nodes)
-      template_nodes.select{|node| node.is_a?(AST::Placeholder) }.to_set
+      template_nodes.select{|node| node.placeholder? }.to_set
     end
   end
 end

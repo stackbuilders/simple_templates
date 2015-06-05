@@ -8,6 +8,14 @@ module SimpleTemplates
       def +(other)
         Text.new(contents + other.contents, pos)
       end
+
+      def placeholder?
+        false
+      end
+
+      def text?
+        true
+      end
     end
   end
 end
