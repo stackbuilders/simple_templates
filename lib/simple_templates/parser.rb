@@ -25,6 +25,10 @@ module SimpleTemplates
       def render(context)
         raise NotImplementedError
       end
+
+      def ==(other)
+        contents == other.contents && pos == other.pos
+      end
     end
 
     class Placeholder < Node
@@ -53,22 +57,22 @@ module SimpleTemplates
     # Returns either a stream of valid tokens (Placeholders and Strings),
     # or an Array containing one or more Errors.
     def parse
-      template_nodes, errors = *ast
+      ast, errors = *parse_and_validate
 
       if errors.empty?
+        invalid_ph_msgs = invalid_placeholder_errors(invalid_placeholders(ast))
+
         # This section verifies the *semantics* of the token stream. In this case,
         # all we care about is that the tokens are in the whitelist.
-        Template.new(
-          template_nodes,
-          invalid_placeholder_errors(invalid_placeholders(template_nodes))
-        )
+
+        invalid_ph_msgs.empty? ? ParseResult.new(Template.new(ast), []) :
+          ParseResult.new(nil, invalid_ph_msgs)
 
       else
 
         # We found a syntax error - no need to do semantic analysis since we
-        # don't know what's going on, so just return an invalid Template with
-        # the syntax errors and any valid nodes we happened to pick up.
-        Template.new(template_nodes, errors)
+        # don't know what's going on, so just return the syntax errors.
+        ParseResult.new(nil, errors)
       end
     end
 
@@ -77,7 +81,7 @@ module SimpleTemplates
 
     attr_reader :whitelisted_placeholders, :tokens
 
-    def ast
+    def parse_and_validate
       toks = tokens.clone
 
       template_nodes = []

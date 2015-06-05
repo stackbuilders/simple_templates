@@ -3,27 +3,23 @@ require 'set'
 module SimpleTemplates
   class Template
 
-    attr_reader :ast, :errors
+    attr_reader :ast
 
-    def initialize(ast, errors)
-      @ast    = ast
-      @errors = errors
+    def initialize(ast)
+      @ast = ast
     end
 
-    # Returns all placeholder names used in the template, regardless of whether
-    # they're valid or not.
+    # Returns all placeholder names used in the template.
     def placeholder_names
       placeholders(ast).map(&:contents).to_set
     end
 
     def render(context)
-      raise ArgumentError, "Unable to render using a template with errors!" if errors.any?
-
       ast.map { |node| node.render(context) }.join
     end
 
     def ==(other)
-      @ast = other.ast && @errors == other.errors
+      ast == other.ast
     end
 
     private
