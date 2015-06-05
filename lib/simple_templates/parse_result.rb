@@ -4,13 +4,8 @@ module SimpleTemplates
     attr_reader :template, :errors
 
     def initialize(template, errors)
-      if errors.any? && !template.nil?
-        raise ArgumentError,
-               "Parse results should not include a Template if parsing failed!"
-      end
-
-      @template = template
       @errors   = errors
+      @template = success? ? template : nil
     end
 
     def success?

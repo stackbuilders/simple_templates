@@ -24,12 +24,11 @@ module SimpleTemplates
     # Returns either a stream of valid tokens (Placeholders and Strings),
     # or an Array containing one or more Errors.
     def parse
-      ast, errors = *check_syntax
+      ast, syntax_errors              = *check_syntax
+      ast, invalid_placeholder_errors = *check_valid_placeholders(ast)
 
-      # If there were no syntax errors, check for valid placeholders (semantic
-      # check), otherwise return a failed `ParseResult` with the syntax errors.
-      errors.empty? ? check_valid_placeholders(ast) :
-        ParseResult.new(nil, errors)
+      ParseResult.new(Template.new(ast),
+                      syntax_errors.concat(invalid_placeholder_errors))
     end
 
 
@@ -37,20 +36,19 @@ module SimpleTemplates
 
     attr_reader :whitelisted_placeholders, :tokens
 
+    # This section verifies the *semantics* of the token stream. In this case,
+    # all we care about is that the tokens are in the whitelist.
     def check_valid_placeholders(ast)
       invalid_ph_msgs = invalid_placeholder_errors(invalid_placeholders(ast))
 
-      # This section verifies the *semantics* of the token stream. In this case,
-      # all we care about is that the tokens are in the whitelist.
-
-      invalid_ph_msgs.empty? ? ParseResult.new(Template.new(ast), []) :
-        ParseResult.new(nil, invalid_ph_msgs)
+      [ast, invalid_ph_msgs]
     end
 
     def check_syntax
       toks = tokens.clone
 
       template_nodes = []
+      errors         = []
 
       # This section strictly analyzes the *syntax* of the tokens.
       while toks.any?
@@ -65,7 +63,8 @@ module SimpleTemplates
             # In this case there is a syntactical error, so we don't proceed to
             # do validation of placeholder names since we can't tell what they
             # are with invalid tag syntax! Just return the first syntax error.
-            return [template_nodes, [res]]
+            errors << res
+            break
           end
         else
           next_text_node = toks.shift
@@ -75,7 +74,7 @@ module SimpleTemplates
       end
 
       # At this point we can do minor cleanup of our structure.
-      [compress_adjacent_text_nodes(template_nodes), []]
+      [compress_adjacent_text_nodes(template_nodes), errors]
     end
 
     def invalid_placeholder_errors(invalid_pholders)
