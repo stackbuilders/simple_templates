@@ -53,15 +53,15 @@ module SimpleTemplates
                  reduce([]) do |errs, (expected_type, found_tag)|
 
         if found_tag.nil?
-          break errs << Parser::Error.
-            new("Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} " +
-                 "token, but reached end of input.")
+          break errs << Parser::Error.new(
+          "Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token, but " +
+          "reached end of input.")
 
         elsif expected_type != found_tag.type
-          break errs << Parser::Error.
-            new("Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token at" +
-                " character position #{found_tag.pos}, but found a " +
-                "#{FRIENDLY_TAG_NAMES.fetch(found_tag.type)} token instead.")
+          break errs << Parser::Error.new(
+          "Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token at " +
+          "character position #{found_tag.pos}, but found a " +
+          "#{FRIENDLY_TAG_NAMES.fetch(found_tag.type)} token instead.")
 
         else
           # This token was expected at this point in the placeholder sequence,
