@@ -16,8 +16,8 @@ module SimpleTemplates
 
     Error = Struct.new(:message)
 
-    def initialize(raw_template, whitelisted_placeholders)
-      @tokens                   = Lexer.new(raw_template).tokenize
+    def initialize(tokens, whitelisted_placeholders)
+      @tokens                   = tokens
       @whitelisted_placeholders = whitelisted_placeholders.to_set
     end
 
@@ -52,7 +52,7 @@ module SimpleTemplates
         ps = PlaceholderParser.new(toks)
 
         if ps.applicable?
-          res = ps.placeholder
+          res = ps.parse
           if res.success?
             toks = toks[3..-1] # pop off the tokens we just used.
             template_nodes.concat(res.template)

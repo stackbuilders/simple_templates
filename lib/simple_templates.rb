@@ -11,7 +11,8 @@ module SimpleTemplates
   # Accepts a String representing a template, and an `Array` of placeholders
   # (as `String`s) that should be accepted. Returns a `ParseResult`.
   def self.parse(raw_template_string, whitelisted_placeholders)
-    Parser.new(raw_template_string, whitelisted_placeholders).parse
+    Parser.new(Lexer.new(raw_template_string).tokenize,
+               whitelisted_placeholders).parse
   end
 
   # Accepts a renderable `Template`, and a context in which it should be

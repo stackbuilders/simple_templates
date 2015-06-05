@@ -30,7 +30,7 @@ module SimpleTemplates
 
     # If this stream starts with a placeholder token, parse out the
     # Placeholder, or return an Error indicating the syntax problem.
-    def placeholder
+    def parse
       raise ArgumentError,
         "Stream does not contain any placeholder tags!" unless applicable?
 
