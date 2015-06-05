@@ -16,6 +16,10 @@ module SimpleTemplates
       def text?
         true
       end
+
+      def type
+        'text'
+      end
     end
   end
 end

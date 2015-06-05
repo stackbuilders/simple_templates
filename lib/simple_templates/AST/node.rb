@@ -1,11 +1,12 @@
 module SimpleTemplates
   module AST
     class Node
-      attr_reader :contents, :pos
+      attr_reader :contents, :pos, :valid
 
-      def initialize(contents, pos)
+      def initialize(contents, pos, valid)
         @contents = contents
         @pos      = pos
+        @valid    = valid
       end
 
       def render(context)
@@ -13,7 +14,7 @@ module SimpleTemplates
       end
 
       def ==(other)
-        contents == other.contents && pos == other.pos
+        contents == other.contents && pos == other.pos && valid == other.valid
       end
 
       def placeholder?
@@ -22,6 +23,14 @@ module SimpleTemplates
 
       def text?
         raise NotImplementedError
+      end
+
+      def type
+        raise NotImplementedError
+      end
+
+      def valid?
+        valid
       end
     end
   end

@@ -42,7 +42,7 @@ describe SimpleTemplates do
 
     it "raises an error when an attempt is made to render with an invalid template" do
       lambda {
-        SimpleTemplates.render(SimpleTemplates::ParseResult.new(nil, []))
+        SimpleTemplates.render(SimpleTemplates::Parser::Result.new(nil, []))
       }.must_raise ArgumentError
     end
   end

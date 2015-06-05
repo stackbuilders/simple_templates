@@ -12,6 +12,10 @@ module SimpleTemplates
       def text?
         false
       end
+
+      def type
+        'placeholder'
+      end
     end
   end
 end
