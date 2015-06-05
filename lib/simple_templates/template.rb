@@ -1,6 +1,8 @@
 require 'set'
 
 module SimpleTemplates
+
+  # A `Template` is a renderable collection of SimpleTemplates::AST nodes.
   class Template
 
     attr_reader :ast

@@ -1,6 +1,9 @@
 require 'strscan'
 
 module SimpleTemplates
+
+  # The `SimpleTemplates::Lexer` tokenizes the raw input into a more usable form
+  # for the `SimpleTemplates::Parser`.
   class Lexer
     Token = Struct.new(:type, :content, :pos)
 

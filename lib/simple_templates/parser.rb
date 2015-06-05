@@ -24,23 +24,12 @@ module SimpleTemplates
     # Returns either a stream of valid tokens (Placeholders and Strings),
     # or an Array containing one or more Errors.
     def parse
-      ast, errors = *parse_and_validate
+      ast, errors = *check_syntax
 
-      if errors.empty?
-        invalid_ph_msgs = invalid_placeholder_errors(invalid_placeholders(ast))
-
-        # This section verifies the *semantics* of the token stream. In this case,
-        # all we care about is that the tokens are in the whitelist.
-
-        invalid_ph_msgs.empty? ? ParseResult.new(Template.new(ast), []) :
-          ParseResult.new(nil, invalid_ph_msgs)
-
-      else
-
-        # We found a syntax error - no need to do semantic analysis since we
-        # don't know what's going on, so just return the syntax errors.
+      # If there were no syntax errors, check for valid placeholders (semantic
+      # check), otherwise return a failed `ParseResult` with the syntax errors.
+      errors.empty? ? check_valid_placeholders(ast) :
         ParseResult.new(nil, errors)
-      end
     end
 
 
@@ -48,7 +37,17 @@ module SimpleTemplates
 
     attr_reader :whitelisted_placeholders, :tokens
 
-    def parse_and_validate
+    def check_valid_placeholders(ast)
+      invalid_ph_msgs = invalid_placeholder_errors(invalid_placeholders(ast))
+
+      # This section verifies the *semantics* of the token stream. In this case,
+      # all we care about is that the tokens are in the whitelist.
+
+      invalid_ph_msgs.empty? ? ParseResult.new(Template.new(ast), []) :
+        ParseResult.new(nil, invalid_ph_msgs)
+    end
+
+    def check_syntax
       toks = tokens.clone
 
       template_nodes = []
@@ -70,7 +69,8 @@ module SimpleTemplates
           end
         else
           next_text_node = toks.shift
-          template_nodes << AST::Text.new(unescape(next_text_node), next_text_node.pos)
+          template_nodes << AST::Text.new(unescape(next_text_node),
+                                           next_text_node.pos)
         end
       end
 
@@ -80,14 +80,15 @@ module SimpleTemplates
 
     def invalid_placeholder_errors(invalid_pholders)
       invalid_pholders.map do |p|
-        Error.new("Invalid placeholder with name, '#{p.contents}' found starting at position #{p.pos}.")
+        Error.new("Invalid placeholder with name, '#{p.contents}' " +
+                   "found starting at position #{p.pos}.")
       end
     end
 
     # Invalid placeholders are ones that are not explicitly whitelisted.
     def invalid_placeholders(template_nodes)
       placeholders(template_nodes).
-        reject{|ph| whitelisted_placeholders.include?(ph.contents)}
+        reject{|ph| whitelisted_placeholders.include?(ph.contents) }
     end
 
     def placeholders(template_nodes)
@@ -100,7 +101,7 @@ module SimpleTemplates
 
     def compress_adjacent_text_nodes(template_nodes)
       template_nodes.reduce([]) do |compressed, node|
-        if !compressed.empty? && compressed.last.text? && node.text?
+        if compressed.any? && compressed.last.text? && node.text?
           compressed[0..-2] << compressed[-1] + node
         else
           compressed << node
