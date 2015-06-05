@@ -14,39 +14,6 @@ module SimpleTemplates
       gt:  '>',
     }.freeze
 
-    class Node
-      attr_reader :contents, :pos
-
-      def initialize(contents, pos)
-        @contents = contents
-        @pos      = pos
-      end
-
-      def render(context)
-        raise NotImplementedError
-      end
-
-      def ==(other)
-        contents == other.contents && pos == other.pos
-      end
-    end
-
-    class Placeholder < Node
-      def render(context)
-        context.public_send(contents)
-      end
-    end
-
-    class Text < Node
-      def render(context)
-        contents
-      end
-
-      def +(other)
-        Text.new(contents + other.contents, pos)
-      end
-    end
-
     Error = Struct.new(:message)
 
     def initialize(raw_template, whitelisted_placeholders)
@@ -92,7 +59,7 @@ module SimpleTemplates
 
         if ps.applicable?
           case res = ps.placeholder
-          when Placeholder
+          when AST::Placeholder
             toks = toks[3..-1] # pop off the tokens we just used.
             template_nodes << res
           else
@@ -103,7 +70,7 @@ module SimpleTemplates
           end
         else
           next_text_node = toks.shift
-          template_nodes << Text.new(unescape(next_text_node), next_text_node.pos)
+          template_nodes << AST::Text.new(unescape(next_text_node), next_text_node.pos)
         end
       end
 
@@ -124,7 +91,7 @@ module SimpleTemplates
     end
 
     def placeholders(template_nodes)
-      template_nodes.select{|node| node.is_a?(Placeholder) }.to_set
+      template_nodes.select{|node| node.is_a?(AST::Placeholder) }.to_set
     end
 
     def unescape(token)

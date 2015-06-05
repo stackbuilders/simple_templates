@@ -5,19 +5,19 @@ require 'set'
 describe SimpleTemplates::Parser do
   describe "#parse" do
     it "parses a simple valid template" do
-      pholder = SimpleTemplates::Parser::Placeholder.new('bar', 4)
+      pholder = SimpleTemplates::AST::Placeholder.new('bar', 4)
 
       SimpleTemplates::Parser.new('foo <bar>', ['bar']).parse.
         must_equal SimpleTemplates::ParseResult.new(
-          SimpleTemplates::Template.new([SimpleTemplates::Parser::Text.new('foo ', 0), pholder]),
+          SimpleTemplates::Template.new([SimpleTemplates::AST::Text.new('foo ', 0), pholder]),
           [])
     end
 
     it "compresses adjacent text nodes after unescaping" do
-      pholder = SimpleTemplates::Parser::Placeholder.new('bar', 7)
+      pholder = SimpleTemplates::AST::Placeholder.new('bar', 7)
 
       SimpleTemplates::Parser.new('foo \< <bar>', ['bar']).parse.template.
-        must_equal SimpleTemplates::Template.new([SimpleTemplates::Parser::Text.new('foo < ', 0), pholder])
+        must_equal SimpleTemplates::Template.new([SimpleTemplates::AST::Text.new('foo < ', 0), pholder])
     end
 
     it "returns an error when an opening bracket is found without a closing bracket" do

@@ -47,7 +47,7 @@ module SimpleTemplates
         end
       end
 
-      Parser::Placeholder.new(tag_name.content, tag_start.pos)
+      AST::Placeholder.new(tag_name.content, tag_start.pos)
     end
 
 
