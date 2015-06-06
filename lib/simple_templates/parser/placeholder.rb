@@ -12,7 +12,7 @@ module SimpleTemplates
       end
 
       # If this stream starts with a placeholder token, parse out the
-      # Placeholder, or return an Error indicating the syntax problem.
+      # Placeholder, or a Result with errors indicating the syntax problem.
       def parse
         errors = check_placeholder_syntax
 
@@ -39,14 +39,14 @@ module SimpleTemplates
 
           if found_tag.nil?
             break errs << Parser::Error.new(
-            "Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token, but " +
-            "reached end of input.")
+              "Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token, but" +
+              " reached end of input.")
 
           elsif expected_type != found_tag.type
             break errs << Parser::Error.new(
-            "Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token at " +
-            "character position #{found_tag.pos}, but found a " +
-            "#{FRIENDLY_TAG_NAMES.fetch(found_tag.type)} token instead.")
+              "Expected #{FRIENDLY_TAG_NAMES.fetch(expected_type)} token at " +
+              "character position #{found_tag.pos}, but found a " +
+              "#{FRIENDLY_TAG_NAMES.fetch(found_tag.type)} token instead.")
 
           else
             # This token was expected at this point in the placeholder sequence,

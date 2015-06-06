@@ -7,9 +7,10 @@ module SimpleTemplates
     # be in the tag whitelist.
     class Template < Base
 
-      # Returns either a stream of valid tokens (Placeholders and Strings),
-      # or an Array containing one or more Errors.
+      # Returns a Parser::Result containing a Template if parsing was successful,
+      # or any Errors that were encountered.
       def parse
+        ast    = []
         errors = []
 
         while tokens.any?
@@ -20,20 +21,20 @@ module SimpleTemplates
               Error.new("Encountered unexpected token in stream " +
                 "(#{FRIENDLY_TAG_NAMES[tokens.first.type]}), but expected to " +
                 "see one of the following types: #{acceptable_starting_tokens}.")
-
-            @tokens = []
+              @tokens = []
 
           else
             res = parser.parse
             if res.success?
               @tokens = res.remaining_tokens
-              @ast = ast.concat(res.template)
+              ast = ast.concat(res.template)
 
             else
               # Once we get a syntax error, we can't really determine if anything
               # else is broken syntactically, so return with the first Error.
               @tokens = []
               errors.concat(res.errors)
+
             end
           end
         end

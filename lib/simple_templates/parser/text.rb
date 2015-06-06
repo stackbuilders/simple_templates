@@ -14,22 +14,18 @@ module SimpleTemplates
       }.freeze
 
       def parse
-        text_token = nil
+        txt_node = nil
 
         while applicable?
-          next_text_node = @tokens.shift
-          unescaped = unescape(next_text_node)
+          next_txt_token = @tokens.shift
 
-          content, pos = if text_token.nil?
-            [unescaped, next_text_node.pos]
-          else
-            [text_token.contents + unescaped, text_token.pos]
-          end
+          this_txt_node =
+            AST::Text.new(unescape(next_txt_token), next_txt_token.pos, true)
 
-          text_token = AST::Text.new(content, pos, true)
+          txt_node = txt_node.nil? ? this_txt_node : txt_node + this_txt_node
         end
 
-        Parser::Result.new([text_token], [], tokens)
+        Parser::Result.new([txt_node], [], tokens)
       end
 
       private

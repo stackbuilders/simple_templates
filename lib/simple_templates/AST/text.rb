@@ -6,7 +6,7 @@ module SimpleTemplates
       end
 
       def +(other)
-        Text.new(contents + other.contents, pos)
+        Text.new(contents + other.contents, pos, valid && other.valid)
       end
 
       def placeholder?
