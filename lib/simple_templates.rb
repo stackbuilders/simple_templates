@@ -1,6 +1,7 @@
 require "strscan"
 
 require 'simple_templates/lexer'
+require 'simple_templates/template'
 
 require 'simple_templates/parser/base'
 require 'simple_templates/parser/result'
