@@ -20,6 +20,28 @@ describe SimpleTemplates::Parser do
         must_equal SimpleTemplates::Template.new([SimpleTemplates::AST::Text.new('foo < ', 0, true), pholder])
     end
 
+    it "allows text after placeholders" do
+      pholder = SimpleTemplates::AST::Placeholder.new('bar', 7, true)
+      pholder2 = SimpleTemplates::AST::Placeholder.new('baz', 13, true)
+
+      SimpleTemplates.parse('foo \< <bar> <baz>', ['bar', 'baz']).template.
+        must_equal SimpleTemplates::Template.new([
+          SimpleTemplates::AST::Text.new('foo < ', 0, true),
+          pholder,
+          SimpleTemplates::AST::Text.new(' ', 12, true),
+          pholder2
+      ])
+    end
+
+    it "allows templates starting with placeholders" do
+      pholder = SimpleTemplates::AST::Placeholder.new('foo', 0, true)
+
+      SimpleTemplates.parse('<foo> bar', ['foo']).template.
+        must_equal SimpleTemplates::Template.new([pholder,
+          SimpleTemplates::AST::Text.new(' bar', 5, true)])
+    end
+
+
     it "returns an error when an opening bracket is found without a closing bracket" do
       SimpleTemplates.parse('foo < <bar>', ['bar']).must_equal SimpleTemplates::Parser::Result.new(nil, [
         SimpleTemplates::Parser::Error.new("Expected placeholder end token at character position 6, but found a placeholder start token instead.")
