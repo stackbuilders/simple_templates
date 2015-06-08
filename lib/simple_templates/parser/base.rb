@@ -13,6 +13,10 @@ module SimpleTemplates
         text:     'text'
       }.freeze
 
+      # The Base class doesn't accept any tokens for parsing, since it isn't
+      # supposed to be instantiated.
+      STARTING_TOKENS = [].to_set
+
       def self.applicable?(tokens)
         tokens.any? && self::STARTING_TOKENS.include?(tokens.first.type)
       end
