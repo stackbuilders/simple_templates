@@ -22,11 +22,4 @@ module SimpleTemplates
     Parser::Template.new(Lexer.new(raw_template_string).tokenize,
       whitelisted_placeholders).parse
   end
-
-  # Accepts a renderable `Template`, and a context in which it should be
-  # rendered. Substitutes `Placeholder`s with the result of calling methods
-  # with the same name on the context `Object`.
-  def self.render(template, context)
-    template.render(context)
-  end
 end

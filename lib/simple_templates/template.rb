@@ -16,6 +16,9 @@ module SimpleTemplates
       placeholders.map(&:contents).to_set
     end
 
+    # Accepts a context in which it should be rendered.
+    # Substitutes `Placeholder`s with the result of calling methods
+    # with the same name on the context `Object`.
     def render(context)
       ast.map { |node| node.render(context) }.join
     end
