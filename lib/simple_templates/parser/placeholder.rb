@@ -11,9 +11,7 @@ module SimpleTemplates
 
       EXPECTED_TAG_ORDER = [:ph_start, :text, :ph_end]
 
-      def self.starting_tokens
-        [:ph_start].to_set
-      end
+      STARTING_TOKENS = [:ph_start].to_set
 
       # If this stream starts with a placeholder token, parse out the
       # Placeholder, or a Result with errors indicating the syntax problem.

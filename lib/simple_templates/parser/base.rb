@@ -13,12 +13,8 @@ module SimpleTemplates
         text:     'text'
       }.freeze
 
-      def self.starting_tokens
-        raise NotImplementedError
-      end
-
       def self.applicable?(tokens)
-        tokens.any? && starting_tokens.include?(tokens.first.type)
+        tokens.any? && self::STARTING_TOKENS.include?(tokens.first.type)
       end
 
       def initialize(tokens, whitelisted_placeholders, ast = [])

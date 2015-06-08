@@ -57,7 +57,7 @@ module SimpleTemplates
       end
 
       def acceptable_starting_tokens
-        (Placeholder.starting_tokens | Text.starting_tokens).map do |tag|
+        (Placeholder::STARTING_TOKENS | Text::STARTING_TOKENS).map do |tag|
           FRIENDLY_TAG_NAMES[tag]
         end.join(', ')
       end

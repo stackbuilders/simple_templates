@@ -8,9 +8,7 @@ module SimpleTemplates
   module Parser
     class Text < Base
 
-      def self.starting_tokens
-        [:lt, :gt, :text].to_set
-      end
+      STARTING_TOKENS = [:lt, :gt, :text].to_set
 
       # After parsing, we get a data structure containing `Placeholder`s
       # and `String`s or an `Array` containing a single `Error`.
