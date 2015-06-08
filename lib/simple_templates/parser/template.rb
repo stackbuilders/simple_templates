@@ -64,8 +64,9 @@ module SimpleTemplates
 
       def detect_parser(toks)
         [Placeholder, Text].each do |parser_class|
-          p = parser_class.new(tokens, whitelisted_placeholders)
-          return p if p.applicable?
+          if parser_class.applicable?(tokens)
+            return parser_class.new(tokens, whitelisted_placeholders)
+          end
         end
 
         nil

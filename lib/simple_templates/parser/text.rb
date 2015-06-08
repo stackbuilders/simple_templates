@@ -22,8 +22,8 @@ module SimpleTemplates
       def parse
         txt_node = nil
 
-        while applicable?
-          next_txt_token = @tokens.shift
+        while self.class.applicable?(tokens)
+          next_txt_token = tokens.shift
 
           this_txt_node =
             AST::Text.new(unescape(next_txt_token), next_txt_token.pos, true)

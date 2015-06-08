@@ -17,15 +17,16 @@ module SimpleTemplates
         raise NotImplementedError
       end
 
+      def self.applicable?(tokens)
+        tokens.any? && starting_tokens.include?(tokens.first.type)
+      end
+
       def initialize(tokens, whitelisted_placeholders, ast = [])
         @ast                      = ast.clone
         @tokens                   = tokens.clone
         @whitelisted_placeholders = whitelisted_placeholders.clone
       end
 
-      def applicable?
-        tokens.any? && self.class.starting_tokens.include?(tokens.first.type)
-      end
 
       private
 
