@@ -1,3 +1,8 @@
+require 'set'
+
+require 'simple_templates/parser/error'
+require 'simple_templates/parser/result'
+
 module SimpleTemplates
   module Parser
     class Base

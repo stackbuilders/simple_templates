@@ -1,3 +1,7 @@
+require 'simple_templates/parser/base'
+
+require 'simple_templates/AST/text'
+
 module SimpleTemplates
   module Parser
     class Text < Base
