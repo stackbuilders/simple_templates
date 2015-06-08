@@ -13,7 +13,7 @@ module SimpleTemplates
 
     # Returns all placeholder names used in the template.
     def placeholder_names
-      placeholders(ast).map(&:contents).to_set
+      placeholders.map(&:contents).to_set
     end
 
     def render(context)
@@ -26,8 +26,8 @@ module SimpleTemplates
 
     private
 
-    def placeholders(template_nodes)
-      template_nodes.select{|node| node.placeholder? }.to_set
+    def placeholders
+      ast.select(&:placeholder?).to_set
     end
   end
 end
