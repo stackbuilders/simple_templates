@@ -1,5 +1,3 @@
-require 'set'
-
 require 'simple_templates/parser/error'
 require 'simple_templates/parser/result'
 

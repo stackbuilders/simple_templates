@@ -1,3 +1,5 @@
+require 'set'
+
 require 'simple_templates/parser/base'
 
 require 'simple_templates/AST/placeholder'
