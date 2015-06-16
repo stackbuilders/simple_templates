@@ -9,29 +9,27 @@ module SimpleTemplates
         @valid    = valid
       end
 
-      def render(context)
-        raise NotImplementedError
-      end
-
       def ==(other)
         contents == other.contents && pos == other.pos && valid == other.valid
-      end
-
-      def placeholder?
-        raise NotImplementedError
-      end
-
-      def text?
-        raise NotImplementedError
-      end
-
-      def type
-        raise NotImplementedError
       end
 
       def valid?
         valid
       end
+
+      def type
+        self.class.to_s.split(/::/).last.downcase
+      end
+
+      def type_of?(check)
+        type == check.to_s
+      end
+
+      # :nocov:
+      def render(context)
+        raise NotImplementedError
+      end
+      # :nocov:
     end
   end
 end

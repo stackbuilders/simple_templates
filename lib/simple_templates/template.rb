@@ -30,7 +30,7 @@ module SimpleTemplates
     private
 
     def placeholders
-      ast.select(&:placeholder?).to_set
+      ast.select{ |node| node.type_of?('placeholder') }.to_set
     end
   end
 end

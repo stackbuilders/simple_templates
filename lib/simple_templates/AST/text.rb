@@ -10,18 +10,6 @@ module SimpleTemplates
       def +(other)
         Text.new(contents + other.contents, pos, valid && other.valid)
       end
-
-      def placeholder?
-        false
-      end
-
-      def text?
-        true
-      end
-
-      def type
-        'text'
-      end
     end
   end
 end
