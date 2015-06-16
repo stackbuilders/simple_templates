@@ -1,8 +1,6 @@
 require "coveralls"
 require "simplecov"
 
-require_relative "../lib/simple_templates"
-
 SimpleCov.start do
   formatter SimpleCov::Formatter::MultiFormatter[
     SimpleCov::Formatter::HTMLFormatter,
