@@ -5,10 +5,12 @@ module SimpleTemplates
   # A `Template` is a renderable collection of SimpleTemplates::AST nodes.
   class Template
 
-    attr_reader :ast
+    attr_reader :ast, :errors, :remaining_tokens
 
-    def initialize(ast)
-      @ast = ast
+    def initialize(ast, errors, remaining_tokens)
+      @ast = ast if errors.empty?
+      @errors = errors
+      @remaining_tokens = remaining_tokens
     end
 
     # Returns all placeholder names used in the template.
@@ -20,6 +22,7 @@ module SimpleTemplates
     # Substitutes `Placeholder`s with the result of calling methods
     # with the same name on the context `Object`.
     def render(context)
+      raise errors unless errors.empty?
       ast.map { |node| node.render(context) }.join
     end
 

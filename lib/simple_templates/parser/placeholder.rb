@@ -1,17 +1,16 @@
 require 'set'
 
-require 'simple_templates/parser/base'
-
+require 'simple_templates/parser/node_parser'
 require 'simple_templates/AST/placeholder'
 
 module SimpleTemplates
-  module Parser
+  class Parser
     # Recognizes a set of input tokens as a Placeholder.
-    class Placeholder < Base
+    class Placeholder < NodeParser
 
       EXPECTED_TAG_ORDER = [:ph_start, :text, :ph_end]
 
-      STARTING_TOKENS = [:ph_start].to_set
+      STARTING_TOKENS = Set[:ph_start]
 
       # If this stream starts with a placeholder token, parse out the
       # Placeholder, or a Result with errors indicating the syntax problem.
@@ -28,7 +27,7 @@ module SimpleTemplates
           [] # we don't have an AST portion to return if we encountered errors
         end
 
-        Parser::Result.new(placeholder_ast, errors, remaining_tokens)
+        [placeholder_ast, errors, remaining_tokens]
       end
 
       private

@@ -1,15 +1,25 @@
 require 'simple_templates/template'
-
-require 'simple_templates/parser/base'
 require 'simple_templates/parser/placeholder'
 require 'simple_templates/parser/text'
 
 module SimpleTemplates
-  module Parser
-    # Parsing the SimpleTemplate means verifying the *syntax* and *semantics* of
-    # the template. That is, it shouldn't have malformed tags, and all tags should
-    # be in the tag whitelist.
-    class Template < Base
+  # Parsing the SimpleTemplate means verifying the *syntax* and *semantics* of
+  # the template. That is, it shouldn't have malformed tags, and all tags should
+  # be in the tag whitelist.
+  class Parser
+
+      FRIENDLY_TAG_NAMES = {
+        ph_start: 'placeholder start',
+        ph_end:   'placeholder end',
+        lt:       'less than',
+        gt:       'greater than',
+        text:     'text'
+      }.freeze
+
+      def initialize(tokens, whitelisted_placeholders)
+        @tokens                   = tokens.clone
+        @whitelisted_placeholders = whitelisted_placeholders.clone.freeze
+      end
 
       # Returns a Parser::Result containing a Template if parsing was successful,
       # or any Errors that were encountered.
@@ -28,26 +38,29 @@ module SimpleTemplates
               @tokens = []
 
           else
-            res = parser.parse
-            if res.success?
-              @tokens = res.remaining_tokens
-              ast = ast.concat(res.template)
+            template, errors_result, remaining_tokens = parser.parse
+            if errors_result.empty?
+              @tokens = remaining_tokens
+              ast = ast.concat(template)
 
             else
               # Once we get a syntax error, we can't really determine if anything
               # else is broken syntactically, so return with the first Error.
               @tokens = []
-              errors.concat(res.errors)
+              errors.concat(errors_result)
 
             end
           end
         end
 
         errors.concat(invalid_node_content_errors(ast))
-        Parser::Result.new(SimpleTemplates::Template.new(ast), errors, tokens)
+
+        [ast, errors, tokens]
       end
 
       private
+
+      attr_reader :tokens, :whitelisted_placeholders
 
       def invalid_node_content_errors(ast)
         ast.reject(&:valid?).map do |node|
@@ -71,6 +84,5 @@ module SimpleTemplates
 
         nil
       end
-    end
   end
 end

@@ -1,14 +1,13 @@
 require 'set'
 
-require 'simple_templates/parser/base'
-
+require 'simple_templates/parser/node_parser'
 require 'simple_templates/AST/text'
 
 module SimpleTemplates
-  module Parser
-    class Text < Base
+  class Parser
+    class Text < NodeParser
 
-      STARTING_TOKENS = [:lt, :gt, :text].to_set
+      STARTING_TOKENS = Set[:lt, :gt, :text]
 
       # After parsing, we get a data structure containing `Placeholder`s
       # and `String`s or an `Array` containing a single `Error`.
@@ -29,7 +28,7 @@ module SimpleTemplates
           txt_node = txt_node.nil? ? this_txt_node : txt_node + this_txt_node
         end
 
-        Parser::Result.new([txt_node], [], tokens)
+        [[txt_node], [], tokens]
       end
 
       private

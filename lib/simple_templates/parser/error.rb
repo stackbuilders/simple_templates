@@ -1,5 +1,5 @@
 module SimpleTemplates
-  module Parser
+  class Parser
     Error = Struct.new(:message)
   end
 end
