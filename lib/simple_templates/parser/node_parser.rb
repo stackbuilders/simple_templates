@@ -1,5 +1,7 @@
 require 'simple_templates/parser/error'
 
+require 'set'
+
 module SimpleTemplates
   class Parser
     class NodeParser
