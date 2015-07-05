@@ -1,82 +1,37 @@
 require "strscan"
 
-class SimpleTemplates
-  ERROR_MESSAGES = {
-    unclosed_placeholder: "Unclosed placeholder",
-    unescaped_bracket: "Unescaped bracket",
-    misformatted_placeholder: "Misformatted placeholder",
-    invalid_placeholder: "Invalid placeholder is used"
-  }
+require 'simple_templates/lexer'
+require 'simple_templates/parser'
 
-  ParsingError = Struct.new(:error_code, :pos, :rest) do
-    def message
-      %(#{ERROR_MESSAGES.fetch(error_code)} at pos: #{pos}, rest: "#{rest[0..15]}")
-    end
-  end
-
-  TEXT_UNTIL_BRACKET = /(\\<|\\>|[^<>])*(<|>|\z)/
-  TEXT_UNTIL_END_BRACKET = /(\\<|\\>|[^<>])*(>|\z)/
-
-  attr_reader :template, :tokens, :errors, :allowed_placeholders
-
-  def initialize(template, allowed_placeholders=nil)
-    @template = template
-    @allowed_placeholders = allowed_placeholders
-    tokenize!
-  end
-
-  def tokenize!
-    @tokens = []
-    @errors = []
-
-    scanner = StringScanner.new(template)
-    until scanner.eos?
-      match = scanner.scan(TEXT_UNTIL_BRACKET)
-      if match.end_with?('<')
-        text = match[0..-2]
-        @tokens << [:string, unescape(text)] unless text.empty?
-
-        scan_placeholder(scanner)
-      elsif match.end_with?('>')
-        @errors << ParsingError.new(:unescaped_bracket, scanner.pos, scanner.rest)
-      else
-        @tokens << [:string, unescape(match)] unless match.empty?
-      end
-    end
-  end
-
-  def render(context)
-    tokens.map do |type, value|
-      case type
-      when :string then value
-      when :name   then context.public_send(value)
-      end
-    end.join
-  end
-
-  private
-
-  def unescape(text)
-    text.gsub('\<', '<').gsub('\>', '>')
-  end
-
-  def scan_placeholder(scanner)
-    starting_position = scanner.pos
-    starting_remainder = scanner.rest
-
-    placeholder_name = scanner.scan(TEXT_UNTIL_END_BRACKET)
-    case placeholder_name
-    when /\A\w+>\z/
-      placeholder_name = placeholder_name[0..-2]
-
-      @tokens << [:name, placeholder_name]
-      if allowed_placeholders && !allowed_placeholders.include?(placeholder_name)
-        @errors << ParsingError.new(:invalid_placeholder, starting_position, starting_remainder)
-      end
-    when /\A[^\\]*>\z/
-      @errors << ParsingError.new(:misformatted_placeholder, starting_position, starting_remainder)
-    else
-      @errors << ParsingError.new(:unclosed_placeholder, starting_position, starting_remainder)
-    end
+module SimpleTemplates
+  #
+  # Builds a template renderer from given string template and list of
+  # allowed placeholders
+  #
+  # @param raw_template_string      String        the template to render
+  # @param whitelisted_placeholders Array[String] list of allowed placeholders
+  # @returns Array[SimpleTemplates::Template, Array, Array]
+  #   template, array of errors, array of remaining tokens if error
+  #
+  # @example template without errors
+  #   template, errors, unparsed = SimpleTemplates.parse("Hi <name>", %w[name])
+  #   template.render("Bob") if errors.empty?
+  #   => "Hi Bob"
+  #
+  # @example template with errors
+  #   template, errors, unparsed = SimpleTemplates.parse("Hi <name>", %w[date])
+  #   template
+  #   => nil
+  #   errors
+  #   => [...] # unknown placeholder
+  #
+  def self.parse(raw_template_string, whitelisted_placeholders)
+    ast, errors, remaining_tokens =
+    Template.new(
+      *Parser.new(
+        Lexer.new(raw_template_string).tokenize,
+        whitelisted_placeholders
+      ).parse
+    )
   end
 end
