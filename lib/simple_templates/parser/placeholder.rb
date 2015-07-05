@@ -68,10 +68,6 @@ module SimpleTemplates
       def tag_name
         tokens[1]
       end
-
-      def tag_types
-        tag_tokens.map(&:type)
-      end
     end
   end
 end
