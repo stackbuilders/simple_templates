@@ -7,8 +7,8 @@ module SimpleTemplates
 
     attr_reader :ast, :errors, :remaining_tokens
 
-    def initialize(ast, errors, remaining_tokens)
-      @ast = ast if errors.empty?
+    def initialize(ast, errors = [], remaining_tokens = [])
+      @ast    = ast    if errors.empty?
       @errors = errors
       @remaining_tokens = remaining_tokens
     end
