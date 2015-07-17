@@ -8,9 +8,9 @@ module SimpleTemplates
     attr_reader :ast, :errors, :remaining_tokens
 
     def initialize(ast, errors = [], remaining_tokens = [])
-      @ast    = ast    if errors.empty?
-      @errors = errors
-      @remaining_tokens = remaining_tokens
+      @ast              = ast.clone.freeze if errors.empty?
+      @errors           = errors.clone.freeze
+      @remaining_tokens = remaining_tokens.clone.freeze
     end
 
     # Returns all placeholder names used in the template.
