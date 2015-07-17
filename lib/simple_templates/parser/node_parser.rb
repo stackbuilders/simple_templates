@@ -15,8 +15,8 @@ module SimpleTemplates
       end
 
       def initialize(tokens, whitelisted_placeholders)
-        @tokens                   = tokens.clone
-        @whitelisted_placeholders = whitelisted_placeholders.clone
+        @tokens                   = tokens.clone.freeze
+        @whitelisted_placeholders = whitelisted_placeholders.clone.freeze
       end
 
       private
