@@ -18,9 +18,10 @@ module SimpleTemplates
 
       def parse
         txt_node = nil
+        toks     = tokens.dup
 
-        while self.class.applicable?(tokens)
-          next_txt_token = tokens.shift
+        while self.class.applicable?(toks)
+          next_txt_token = toks.shift
 
           this_txt_node =
             AST::Text.new(unescape(next_txt_token), next_txt_token.pos, true)
@@ -28,7 +29,7 @@ module SimpleTemplates
           txt_node = txt_node.nil? ? this_txt_node : txt_node + this_txt_node
         end
 
-        [[txt_node], [], tokens]
+        [[txt_node], [], toks]
       end
 
       private

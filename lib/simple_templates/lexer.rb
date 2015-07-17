@@ -16,14 +16,16 @@ module SimpleTemplates
     }.freeze
 
     def initialize(input)
-      @ss = StringScanner.new(input)
+      @input = input.clone.freeze
     end
 
     def tokenize
       tokens = []
 
-      until @ss.eos?
-        tok = next_token
+      ss = StringScanner.new(@input)
+
+      until ss.eos?
+        tok = next_token(ss)
 
         if tokens.any? && tok.type == :text && tokens.last.type == :text
           tokens.last.content += tok.content
@@ -37,11 +39,11 @@ module SimpleTemplates
 
     private
 
-    def next_token
-      token_type, pattern = TOKENS.find { |_, pattern| @ss.check(pattern) }
+    def next_token(ss)
+      token_type, pattern = TOKENS.find { |_, pattern| ss.check(pattern) }
 
-      Token.new(token_type, @ss.matched, @ss.pos).tap do
-        @ss.pos += @ss.matched.length
+      Token.new(token_type, ss.matched, ss.pos).tap do
+        ss.pos += ss.matched.length
       end
     end
   end
