@@ -18,7 +18,7 @@ module SimpleTemplates
 
       def parse
         txt_node = nil
-        toks = tokens.dup
+        toks     = tokens.dup
 
         while self.class.applicable?(toks)
           next_txt_token = toks.shift
