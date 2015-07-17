@@ -17,7 +17,7 @@ module SimpleTemplates
       }.freeze
 
       def initialize(tokens, whitelisted_placeholders)
-        @tokens                   = tokens.clone
+        @tokens                   = tokens.clone.freeze
         @whitelisted_placeholders = whitelisted_placeholders.clone.freeze
       end
 
@@ -27,26 +27,28 @@ module SimpleTemplates
         ast    = []
         errors = []
 
-        while tokens.any?
-          parser = detect_parser(tokens)
+        tok_stream = tokens.dup
+
+        while tok_stream.any?
+          parser = detect_parser(tok_stream)
 
           if parser.nil?
             errors <<
               Error.new("Encountered unexpected token in stream " +
-                "(#{FRIENDLY_TAG_NAMES[tokens.first.type]}), but expected to " +
+                "(#{FRIENDLY_TAG_NAMES[tok_stream.first.type]}), but expected to " +
                 "see one of the following types: #{acceptable_starting_tokens}.")
-              @tokens = []
+              tok_stream = []
 
           else
             template, errors_result, remaining_tokens = parser.parse
             if errors_result.empty?
-              @tokens = remaining_tokens
+              tok_stream = remaining_tokens
               ast = ast.concat(template)
 
             else
               # Once we get a syntax error, we can't really determine if anything
               # else is broken syntactically, so return with the first Error.
-              @tokens = []
+              tok_stream = []
               errors.concat(errors_result)
 
             end
@@ -55,7 +57,7 @@ module SimpleTemplates
 
         errors.concat(invalid_node_content_errors(ast))
 
-        [ast, errors, tokens]
+        [ast, errors, tok_stream]
       end
 
       private
@@ -75,10 +77,12 @@ module SimpleTemplates
         end.join(', ')
       end
 
-      def detect_parser(toks)
+      def detect_parser(tokens_to_parse)
+        toks = tokens_to_parse.clone
+
         [Placeholder, Text].each do |parser_class|
-          if parser_class.applicable?(tokens)
-            return parser_class.new(tokens, whitelisted_placeholders)
+          if parser_class.applicable?(toks)
+            return parser_class.new(toks, whitelisted_placeholders)
           end
         end
 
