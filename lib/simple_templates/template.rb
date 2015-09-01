@@ -7,8 +7,8 @@ module SimpleTemplates
 
     attr_reader :ast, :errors, :remaining_tokens
 
-    def initialize(ast, errors = [], remaining_tokens = [])
-      @ast              = ast.clone.freeze if errors.empty?
+    def initialize(ast = [], errors = [], remaining_tokens = [])
+      @ast              = ast.clone.freeze
       @errors           = errors.clone.freeze
       @remaining_tokens = remaining_tokens.clone.freeze
     end
@@ -31,7 +31,9 @@ module SimpleTemplates
     end
 
     def ==(other)
-      ast == other.ast
+      ast == other.ast &&
+        errors == other.errors &&
+        remaining_tokens == other.remaining_tokens
     end
   end
 end

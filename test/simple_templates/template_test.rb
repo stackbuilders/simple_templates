@@ -41,4 +41,18 @@ describe SimpleTemplates::Template do
       ).must_equal "foo baz \\"
     end
   end
+
+  describe "#==" do
+    it "compares the ast" do
+      SimpleTemplates::Template.new([:ast_a], [], []).wont_equal SimpleTemplates::Template.new([:ast_b], [], [])
+    end
+
+    it "compares the errors" do
+      SimpleTemplates::Template.new([], [:error_a], []).wont_equal SimpleTemplates::Template.new([], [:error_b], [])
+    end
+
+    it "compares the remaining tokens" do
+      SimpleTemplates::Template.new([], [], [:remaining_tokens_a]).wont_equal SimpleTemplates::Template.new([], [], [:remaining_tokens_b])
+    end
+  end
 end
