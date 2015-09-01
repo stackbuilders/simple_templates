@@ -3,7 +3,7 @@ require_relative "../../test_helper"
 module SimpleTemplates
   class Parser
     class TestNodeParserImpl < NodeParser
-      STARTING_TOKENS = ["text"]
+      STARTING_TOKENS = [:text]
     end
   end
 end
@@ -11,7 +11,7 @@ end
 describe SimpleTemplates::Parser::NodeParser do
   let(:target)  {SimpleTemplates::Parser::NodeParser}
   let(:impl)    {SimpleTemplates::Parser::TestNodeParserImpl}
-  let(:example) {SimpleTemplates::AST::Text.new("a", 0, true)}
+  let(:example) {SimpleTemplates::Lexer::Token.new(:text, 'a', 0)}
 
   describe "#applicable?" do
     it "ignores missing" do

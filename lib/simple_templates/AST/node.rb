@@ -17,14 +17,6 @@ module SimpleTemplates
         valid
       end
 
-      def type
-        self.class.to_s.split(/::/).last.downcase
-      end
-
-      def type_of?(check)
-        type == check.to_s
-      end
-
       # :nocov:
       def render(context)
         raise NotImplementedError
