@@ -11,6 +11,12 @@ module SimpleTemplates
       @ast              = ast.clone.freeze if errors.empty?
       @errors           = errors.clone.freeze
       @remaining_tokens = remaining_tokens.clone.freeze
+
+      @ast.map(&:class).uniq.each do |ast_class|
+        if ast_class.const_get(:TemplateMethods)
+          extend(ast_class.const_get(:TemplateMethods))
+        end
+      end
     end
 
     # Returns all placeholder names used in the template.
@@ -33,7 +39,7 @@ module SimpleTemplates
     private
 
     def placeholders
-      ast.select{ |node| node.type_of?('placeholder') }.to_set
+      Set.new
     end
   end
 end
