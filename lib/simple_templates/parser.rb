@@ -3,9 +3,8 @@ require 'simple_templates/parser/placeholder'
 require 'simple_templates/parser/text'
 
 module SimpleTemplates
-  # Parsing the SimpleTemplate means verifying the *syntax* and *semantics* of
-  # the template. That is, it shouldn't have malformed tags, and all tags should
-  # be in the tag whitelist.
+  # Parsing the SimpleTemplate means verifying that there are no malformed tags,
+  # and all tags are in the tag whitelist.
   class Parser
 
       FRIENDLY_TAG_NAMES = {
