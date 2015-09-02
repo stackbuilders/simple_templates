@@ -29,7 +29,9 @@ module SimpleTemplates
     ast, errors, remaining_tokens =
     Template.new(
       *Parser.new(
-        Lexer.new(raw_template_string).tokenize,
+        Unescapes.new('<', '>'),
+        Lexer.new(Delimiter.new(/\\</, /\\>/, /\</, /\>/), raw_template_string).
+          tokenize,
         whitelisted_placeholders
       ).parse
     )

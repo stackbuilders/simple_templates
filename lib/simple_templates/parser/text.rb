@@ -7,14 +7,12 @@ module SimpleTemplates
   class Parser
     class Text < NodeParser
 
-      STARTING_TOKENS = Set[:lt, :gt, :text]
+      STARTING_TOKENS = Set[:quoted_ph_start, :quoted_ph_end, :text]
 
-      # After parsing, we get a data structure containing `Placeholder`s
-      # and `String`s or an `Array` containing a single `Error`.
-      UNESCAPES = {
-        lt:  '<',
-        gt:  '>',
-      }.freeze
+      UNESCAPE_METHODS = {
+        quoted_ph_start: :start,
+        quoted_ph_end:   :end
+      }
 
       def parse
         txt_node = nil
@@ -35,7 +33,7 @@ module SimpleTemplates
       private
 
       def unescape(token)
-        UNESCAPES[token.type] || token.content
+        unescapes[UNESCAPE_METHODS[token.type]] || token.content
       end
     end
   end

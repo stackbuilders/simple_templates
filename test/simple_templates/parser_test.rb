@@ -47,6 +47,25 @@ describe SimpleTemplates::Parser do
       ]
     end
 
+    it "parses other placeholder types by changing the delimiter Struct" do
+      pholder = SimpleTemplates::AST::Placeholder.new('foo', 0, true)
+
+      delim = SimpleTemplates::Delimiter.new(/\\\[\\\[/, /\\\]\\\]/, /\[\[/, /\]\]/)
+
+      ast, errors, remaining_tokens =
+      SimpleTemplates::Template.new(
+        *SimpleTemplates::Parser.new(
+          SimpleTemplates::Unescapes.new('[[', ']]'),
+          SimpleTemplates::Lexer.new(delim, '[[foo]] \[\[ bar').tokenize,
+          ['foo']
+        ).parse
+      )
+
+      ast.ast.must_equal [
+        pholder,
+        SimpleTemplates::AST::Text.new(' [[ bar', 7, true)
+      ]
+    end
 
     it "returns an error when an opening bracket is found without a closing bracket" do
       SimpleTemplates.parse('foo < <bar>', ['bar']).errors.must_equal [
@@ -56,13 +75,13 @@ describe SimpleTemplates::Parser do
 
     it "returns an error when a closing bracket is found before an opening bracket" do
       SimpleTemplates.parse('foo > <bar>', ['bar']).errors.must_equal [
-        SimpleTemplates::Parser::Error.new('Encountered unexpected token in stream (placeholder end), but expected to see one of the following types: placeholder start, less than, greater than, text.')
+        SimpleTemplates::Parser::Error.new('Encountered unexpected token in stream (placeholder end), but expected to see one of the following types: placeholder start, quoted placeholder start, quoted placeholder end, text.')
       ]
     end
 
     it "returns errors about invalid placeholders encountered before a syntactical error" do
       SimpleTemplates.parse('foo <baz> >', []).errors.must_equal [
-        SimpleTemplates::Parser::Error.new('Encountered unexpected token in stream (placeholder end), but expected to see one of the following types: placeholder start, less than, greater than, text.'),
+        SimpleTemplates::Parser::Error.new('Encountered unexpected token in stream (placeholder end), but expected to see one of the following types: placeholder start, quoted placeholder start, quoted placeholder end, text.'),
         SimpleTemplates::Parser::Error.new('Invalid SimpleTemplates::AST::Placeholder with contents, \'baz\' found starting at position 4.')
       ]
     end

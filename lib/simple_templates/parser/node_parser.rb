@@ -14,14 +14,15 @@ module SimpleTemplates
         tokens.any? && self::STARTING_TOKENS.include?(tokens.first.type)
       end
 
-      def initialize(tokens, whitelisted_placeholders)
+      def initialize(unescapes, tokens, whitelisted_placeholders)
+        @unescapes                = unescapes.to_h.clone.freeze
         @tokens                   = tokens.clone.freeze
         @whitelisted_placeholders = whitelisted_placeholders.clone.freeze
       end
 
       private
 
-      attr_reader :tokens, :whitelisted_placeholders
+      attr_reader :tokens, :whitelisted_placeholders, :unescapes
     end
   end
 end

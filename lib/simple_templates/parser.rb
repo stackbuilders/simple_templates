@@ -8,14 +8,15 @@ module SimpleTemplates
   class Parser
 
       FRIENDLY_TAG_NAMES = {
-        ph_start: 'placeholder start',
-        ph_end:   'placeholder end',
-        lt:       'less than',
-        gt:       'greater than',
-        text:     'text'
+        ph_start:        'placeholder start',
+        ph_end:          'placeholder end',
+        quoted_ph_start: 'quoted placeholder start',
+        quoted_ph_end:   'quoted placeholder end',
+        text:            'text'
       }.freeze
 
-      def initialize(tokens, whitelisted_placeholders)
+      def initialize(unescapes, tokens, whitelisted_placeholders)
+        @unescapes                = unescapes.clone.freeze
         @tokens                   = tokens.clone.freeze
         @whitelisted_placeholders = whitelisted_placeholders.clone.freeze
       end
@@ -61,7 +62,7 @@ module SimpleTemplates
 
       private
 
-      attr_reader :tokens, :whitelisted_placeholders
+      attr_reader :tokens, :whitelisted_placeholders, :unescapes
 
       def invalid_node_content_errors(ast)
         ast.reject(&:valid?).map do |node|
@@ -81,7 +82,7 @@ module SimpleTemplates
 
         [Placeholder, Text].each do |parser_class|
           if parser_class.applicable?(toks)
-            return parser_class.new(toks, whitelisted_placeholders)
+            return parser_class.new(unescapes, toks, whitelisted_placeholders)
           end
         end
 
