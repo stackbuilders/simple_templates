@@ -2,6 +2,8 @@ require "strscan"
 
 require 'simple_templates/lexer'
 require 'simple_templates/parser'
+require 'simple_templates/unescapes'
+require 'simple_templates/delimiter'
 
 module SimpleTemplates
   #
