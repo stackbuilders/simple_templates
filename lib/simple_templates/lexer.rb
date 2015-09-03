@@ -9,7 +9,7 @@ module SimpleTemplates
 
     def initialize(delimiter, input)
       @input  = input.clone.freeze
-      @tokens = delimiter.to_h.merge(text: /./).freeze
+      @tokens = delimiter.to_h.merge(text: /./m).freeze
     end
 
     def tokenize
