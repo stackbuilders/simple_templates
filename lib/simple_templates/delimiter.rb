@@ -3,7 +3,6 @@ module SimpleTemplates
     :quoted_ph_start,
     :quoted_ph_end,
     :ph_start,
-    :ph_end,
-    :text
+    :ph_end
   )
 end
