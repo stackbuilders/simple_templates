@@ -47,6 +47,15 @@ describe SimpleTemplates::Parser do
       ]
     end
 
+    it "allows templates with placeholders that contain underscores" do
+      pholder = SimpleTemplates::AST::Placeholder.new('some_name', 0, true)
+
+      SimpleTemplates.parse('<some_name> bar', ['some_name']).ast.must_equal [
+        pholder,
+        SimpleTemplates::AST::Text.new(' bar', 11, true)
+      ]
+    end
+
     it "parses other placeholder types by changing the delimiter Struct" do
       pholder = SimpleTemplates::AST::Placeholder.new('foo', 0, true)
 

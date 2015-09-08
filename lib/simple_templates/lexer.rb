@@ -7,7 +7,7 @@ module SimpleTemplates
   class Lexer
     Token = Struct.new(:type, :content, :pos)
 
-    VALID_PLACEHOLDER = { :ph_name => /[A-Za-z0-9]+/ }.freeze
+    VALID_PLACEHOLDER = { ph_name: /[A-Za-z0-9_]+/ }.freeze
 
     def initialize(delimiter, input)
       @input    = input.clone.freeze
