@@ -8,7 +8,7 @@ module SimpleTemplates
     # Recognizes a set of input tokens as a Placeholder.
     class Placeholder < NodeParser
 
-      EXPECTED_TAG_ORDER = [:ph_start, :text, :ph_end]
+      EXPECTED_TAG_ORDER = [:ph_start, :ph_name, :ph_end]
 
       STARTING_TOKENS = Set[:ph_start]
 

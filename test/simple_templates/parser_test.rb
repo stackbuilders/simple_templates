@@ -69,7 +69,7 @@ describe SimpleTemplates::Parser do
 
     it "returns an error when an opening bracket is found without a closing bracket" do
       SimpleTemplates.parse('foo < <bar>', ['bar']).errors.must_equal [
-        SimpleTemplates::Parser::Error.new("Expected placeholder end token at character position 6, but found a placeholder start token instead.")
+        SimpleTemplates::Parser::Error.new("Expected placeholder name token at character position 5, but found a text token instead.")
       ]
     end
 
@@ -91,6 +91,28 @@ describe SimpleTemplates::Parser do
         SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'baz' found starting at position 4.")]
     end
 
+    it "returns an error when a placeholder with newlines is found" do
+      SimpleTemplates.parse("foo <ba\nr>", ["ba\nr"]).errors.must_equal [
+        SimpleTemplates::Parser::Error.new("Expected placeholder end token at character position 7, but found a text token instead.")]
+    end
+
+    it "returns an error when a placeholder with spaces is found" do
+      SimpleTemplates.parse("foo <ba r>", ['ba r']).errors.must_equal [
+        SimpleTemplates::Parser::Error.
+        new("Expected placeholder end token at character position 7, but found a text token instead.")]
+    end
+
+    it "returns an error when a placeholder with tabs is found" do
+      SimpleTemplates.parse("foo <ba\tr>", ["ba\tr"]).errors.must_equal [
+        SimpleTemplates::Parser::Error.new("Expected placeholder end token at character position 7, but found a text token instead.")]
+    end
+
+    it "returns an error when a placeholder with other characters is found" do
+      SimpleTemplates.parse("foo <ba-r>", ['ba-r']).errors.must_equal [
+        SimpleTemplates::Parser::Error.new("Expected placeholder end token at character position 7, but found a text token instead.")]
+    end
+
+
     it "returns an multiple errors when there are multiple invalid placeholders" do
       SimpleTemplates.parse('foo <baz> <buz>', []).errors.must_equal [
         SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'baz' found starting at position 4."),
@@ -100,12 +122,12 @@ describe SimpleTemplates::Parser do
 
     it "returns an error when multiple opening brackets are found" do
       SimpleTemplates.parse('foo <<baz>', ['bar']).errors.must_equal [
-        SimpleTemplates::Parser::Error.new("Expected text token at character position 5, but found a placeholder start token instead.")]
+        SimpleTemplates::Parser::Error.new("Expected placeholder name token at character position 5, but found a placeholder start token instead.")]
     end
 
     it "returns an error when empty placeholder is found" do
       SimpleTemplates.parse('foo <>', ['bar']).errors.must_equal [
-        SimpleTemplates::Parser::Error.new("Expected text token at character position 5, but found a placeholder end token instead.")]
+        SimpleTemplates::Parser::Error.new("Expected placeholder name token at character position 5, but found a placeholder end token instead.")]
     end
 
     it "returns an error when a closing tag is expected, but an opening tag is found" do
