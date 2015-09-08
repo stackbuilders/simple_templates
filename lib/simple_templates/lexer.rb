@@ -22,15 +22,13 @@ module SimpleTemplates
         tok = next_token(ss)
         consolidate_tokens(tok)
       end
-
+      # binding.pry
       tokens
     end
 
     private
 
-    attr_accessor :tokens
-    # Not sure why the attr_reader is not working
-    attr_reader :matchers
+    attr_reader :matchers, :tokens
 
     # ss for string_scanner
     def next_token(ss)
@@ -63,14 +61,8 @@ module SimpleTemplates
     def consolidate_tokens(token)
       if tokens.any? && token.type == :text && tokens.last.type == :text
         tokens.last.content += token.content
-      elsif token.type == :ph_start
-        token.type = :placeholder
-        @matchers = PLACEHOLDER_MATCHER.merge(@matchers)
       elsif tokens.any? && token.type == :placeholder && tokens.last.type == :placeholder
         tokens.last.content += token.content
-      elsif token.type == :ph_end
-        token.type = :placeholder
-        @matchers.shift
       else
         tokens << token
       end

@@ -33,7 +33,7 @@ module SimpleTemplates
       *Parser.new(
         Unescapes.new('<', '>'),
         Lexer.new(
-          Delimiter.new(/\\</, /\\>/, /\</, /\>/, /./m),
+          Delimiter.new(/\\</, /\\>/, /\</, /\>/),
           raw_template_string)
           .tokenize,
         whitelisted_placeholders
