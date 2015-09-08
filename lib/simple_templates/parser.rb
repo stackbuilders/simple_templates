@@ -9,6 +9,7 @@ module SimpleTemplates
 
       FRIENDLY_TAG_NAMES = {
         ph_start:        'placeholder start',
+        ph_name:         'placeholder name',
         ph_end:          'placeholder end',
         quoted_ph_start: 'quoted placeholder start',
         quoted_ph_end:   'quoted placeholder end',
