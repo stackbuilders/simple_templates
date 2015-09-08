@@ -1,4 +1,5 @@
 require 'strscan'
+require 'pry'
 
 module SimpleTemplates
 
@@ -6,37 +7,64 @@ module SimpleTemplates
   # for the `SimpleTemplates::Parser`.
   class Lexer
     Token = Struct.new(:type, :content, :pos)
+    PLACEHOLDER_MATCHER = { placeholder: /[a-zA-Z0-9]/ }
 
     def initialize(delimiter, input)
       @input  = input.clone.freeze
-      @tokens = delimiter.to_h.merge(text: /./).freeze
+      @matchers = delimiter.to_h.merge(text: /./m).freeze
+      @tokens = []
     end
 
     def tokenize
-      tokens = []
-
       ss = StringScanner.new(@input)
 
       until ss.eos?
         tok = next_token(ss)
-
-        if tokens.any? && tok.type == :text && tokens.last.type == :text
-          tokens.last.content += tok.content
-        else
-          tokens << tok
-        end
+        consolidate_tokens(tok)
       end
-
+      # binding.pry
       tokens
     end
 
     private
 
+    attr_reader :matchers, :tokens
+
+    # ss for string_scanner
     def next_token(ss)
-      token_type, pattern = @tokens.find { |_, pattern| ss.check(pattern) }
+      if permitted_placeholder?(ss)
+        token_type, _pattern = PLACEHOLDER_MATCHER.first
+      else
+        token_type, _pattern = matchers.find { |_, pattern| ss.check(pattern) }
+      end
 
       Token.new(token_type, ss.matched, ss.pos).tap do
         ss.pos += ss.matched.length
+      end
+    end
+
+    def permitted_placeholder?(ss)
+      tokens.any? &&
+        last_token_is_placeholder_or_placeholder_start? &&
+        placeholder?(ss)
+    end
+
+    def last_token_is_placeholder_or_placeholder_start?
+      tokens.last.type == :ph_start || tokens.last.type == :placeholder
+    end
+
+    def placeholder?(string_scanner)
+      string_scanner.check(PLACEHOLDER_MATCHER.values.first)
+    end
+
+    # WIP Still need to change this, no mutation needed
+    def consolidate_tokens(token)
+      if tokens.any? && token.type == :text && tokens.last.type == :text
+        tokens.last.content += token.content
+      elsif tokens.any? && token.type == :placeholder && tokens.last.type == :placeholder
+        tokens.last.content += token.content
+      else
+        tokens << token
       end
     end
   end
