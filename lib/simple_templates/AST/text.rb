@@ -8,7 +8,7 @@ module SimpleTemplates
       end
 
       def +(other)
-        Text.new(contents + other.contents, pos, valid && other.valid)
+        Text.new(contents + other.contents, pos, allowed && other.allowed)
       end
     end
   end

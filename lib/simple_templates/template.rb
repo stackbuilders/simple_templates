@@ -21,9 +21,9 @@ module SimpleTemplates
     # Accepts a context in which it should be rendered.
     # Substitutes `Placeholder`s with the result of calling methods
     # with the same name on the context `Object`.
-    def render(context)
-      raise errors unless errors.empty?
-      ast.map { |node| node.render(context) }.join
+    def render(substitutions)
+      raise errors.map(&:message).join(", ") unless errors.empty?
+      ast.map { |node| node.render(substitutions) }.join
     end
 
     def placeholders
