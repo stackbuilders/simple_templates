@@ -32,7 +32,7 @@ describe SimpleTemplates::Lexer do
       ]
     end
 
-    it 'tokenizes a string with invalid placeholders, contains new line character' do
+    it 'tokenizes a string with invalid placeholders, containing a new line character' do
       raw_input = "string with <foo\nbar> text"
       tokens = SimpleTemplates::Lexer.new(
         delimiter,
@@ -80,8 +80,8 @@ describe SimpleTemplates::Lexer do
         token.new(:text, "\n Something else", 25)
       ]
     end
-    
-    it 'tokenizes a string with invalid placeholder and an empty placehorder name' do
+
+    it 'tokenizes a string with invalid placeholder and an empty placeholder name' do
       raw_input = "string with <> text"
       tokens = SimpleTemplates::Lexer.new(
         delimiter,
@@ -95,7 +95,7 @@ describe SimpleTemplates::Lexer do
         token.new(:text, ' text', 14)
       ]
     end
-    it 'tokenizes a string with placeholders with new line character in the placeholder name' do
+    it 'tokenizes a string with placeholders having a new line character in the placeholder name' do
       raw_input = "string with <placeholder\n> Something else"
       tokens = SimpleTemplates::Lexer.new(
         delimiter,
