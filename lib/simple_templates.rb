@@ -11,7 +11,7 @@ module SimpleTemplates
   # allowed placeholders
   #
   # @param raw_template_string      String        the template to render
-  # @param whitelisted_placeholders Array[String] list of allowed placeholders
+  # @param allowed_placeholders Array[String] list of allowed placeholders
   # @returns Array[SimpleTemplates::Template, Array, Array]
   #   template, array of errors, array of remaining tokens if error
   #
@@ -27,14 +27,13 @@ module SimpleTemplates
   #   errors
   #   => [...] # unknown placeholder
   #
-  def self.parse(raw_template_string, whitelisted_placeholders)
-    ast, errors, remaining_tokens =
+  def self.parse(raw_template_string, allowed_placeholders)
     Template.new(
       *Parser.new(
         Unescapes.new('<', '>'),
         Lexer.new(Delimiter.new(/\\</, /\\>/, /\</, /\>/), raw_template_string).
           tokenize,
-        whitelisted_placeholders
+        allowed_placeholders
       ).parse
     )
   end

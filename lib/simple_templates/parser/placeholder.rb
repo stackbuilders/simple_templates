@@ -20,9 +20,10 @@ module SimpleTemplates
         placeholder_ast = if errors.empty?
           remaining_tokens = tokens[3..-1]
 
-          valid = whitelisted_placeholders.include?(tag_name.content)
+          allowed = allowed_placeholders.nil? ||
+                    allowed_placeholders.include?(tag_name.content)
 
-          [AST::Placeholder.new(tag_name.content, tag_start.pos, valid)]
+          [AST::Placeholder.new(tag_name.content, tag_start.pos, allowed)]
         else
           [] # we don't have an AST portion to return if we encountered errors
         end

@@ -4,7 +4,7 @@ require 'simple_templates/parser/text'
 
 module SimpleTemplates
   # Parsing the SimpleTemplate means verifying that there are no malformed tags,
-  # and all tags are in the tag whitelist.
+  # and all tags are in the 'allowed' list.
   class Parser
 
       FRIENDLY_TAG_NAMES = {
@@ -16,10 +16,13 @@ module SimpleTemplates
         text:            'text'
       }.freeze
 
-      def initialize(unescapes, tokens, whitelisted_placeholders)
-        @unescapes                = unescapes.clone.freeze
-        @tokens                   = tokens.clone.freeze
-        @whitelisted_placeholders = whitelisted_placeholders.clone.freeze
+      # If `allowed_placeholders` is nil, all placeholders are permitted.
+      def initialize(unescapes, tokens, allowed_placeholders)
+        @unescapes            = unescapes.clone.freeze
+        @tokens               = tokens.clone.freeze
+
+        @allowed_placeholders = allowed_placeholders &&
+                                allowed_placeholders.clone.freeze
       end
 
       # Returns a Parser::Result containing a Template if parsing was successful,
@@ -63,10 +66,10 @@ module SimpleTemplates
 
       private
 
-      attr_reader :tokens, :whitelisted_placeholders, :unescapes
+      attr_reader :tokens, :allowed_placeholders, :unescapes
 
       def invalid_node_content_errors(ast)
-        ast.reject(&:valid?).map do |node|
+        ast.reject(&:allowed?).map do |node|
           Error.new("Invalid #{node.class} with contents, '#{node.contents}' " +
           "found starting at position #{node.pos}.")
         end
@@ -79,11 +82,11 @@ module SimpleTemplates
       end
 
       def detect_parser(tokens_to_parse)
-        toks = tokens_to_parse.clone
+        toks = tokens_to_parse.clone.freeze
 
         [Placeholder, Text].each do |parser_class|
           if parser_class.applicable?(toks)
-            return parser_class.new(unescapes, toks, whitelisted_placeholders)
+            return parser_class.new(unescapes, toks, allowed_placeholders)
           end
         end
 

@@ -1,20 +1,20 @@
 module SimpleTemplates
   module AST
     class Node
-      attr_reader :contents, :pos, :valid
+      attr_reader :contents, :pos, :allowed
 
-      def initialize(contents, pos, valid)
+      def initialize(contents, pos, allowed)
         @contents = contents
         @pos      = pos
-        @valid    = valid
+        @allowed  = allowed
       end
 
       def ==(other)
-        contents == other.contents && pos == other.pos && valid == other.valid
+        contents == other.contents && pos == other.pos && allowed == other.allowed
       end
 
-      def valid?
-        valid
+      def allowed?
+        allowed
       end
 
       # :nocov:

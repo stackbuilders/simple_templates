@@ -14,6 +14,26 @@ describe SimpleTemplates::Parser do
       )
     end
 
+    it "marks all nodes as allowed and returns no errors if the allowed_placeholders is nil" do
+      pholder = SimpleTemplates::AST::Placeholder.new('bar', 4, true)
+
+      SimpleTemplates.parse('foo <bar>', nil).must_equal SimpleTemplates::Template.new(
+        [SimpleTemplates::AST::Text.new('foo ', 0, true), pholder],
+        [],
+        []
+      )
+    end
+
+    it "marks all nodes as disallowed and returns errors if the allowed_placeholders is empty" do
+      pholder = SimpleTemplates::AST::Placeholder.new('bar', 4, false)
+
+      SimpleTemplates.parse('foo <bar>', []).must_equal SimpleTemplates::Template.new(
+        [SimpleTemplates::AST::Text.new('foo ', 0, true), pholder],
+        [SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'bar' found starting at position 4.")],
+        []
+      )
+    end
+
     it "compresses adjacent text nodes after unescaping" do
       pholder = SimpleTemplates::AST::Placeholder.new('bar', 7, true)
 
@@ -26,15 +46,16 @@ describe SimpleTemplates::Parser do
       pholder  = SimpleTemplates::AST::Placeholder.new('bar', 7, true)
       pholder2 = SimpleTemplates::AST::Placeholder.new('baz', 13, true)
 
-      SimpleTemplates.parse('foo \< <bar> <baz>', ['bar', 'baz']).must_equal SimpleTemplates::Template.new(
-        [
-          SimpleTemplates::AST::Text.new('foo < ', 0, true),
-          pholder,
-          SimpleTemplates::AST::Text.new(' ', 12, true),
-          pholder2
-        ],
-        [],
-        []
+      SimpleTemplates.parse('foo \< <bar> <baz>', [:bar, :baz]).
+        must_equal SimpleTemplates::Template.new(
+          [
+            SimpleTemplates::AST::Text.new('foo < ', 0, true),
+            pholder,
+            SimpleTemplates::AST::Text.new(' ', 12, true),
+            pholder2
+          ],
+          [],
+          []
       )
     end
 
@@ -50,7 +71,7 @@ describe SimpleTemplates::Parser do
     it "allows templates with placeholders that contain underscores" do
       pholder = SimpleTemplates::AST::Placeholder.new('some_name', 0, true)
 
-      SimpleTemplates.parse('<some_name> bar', ['some_name']).ast.must_equal [
+      SimpleTemplates.parse('<some_name> bar', [:some_name]).ast.must_equal [
         pholder,
         SimpleTemplates::AST::Text.new(' bar', 11, true)
       ]
@@ -77,13 +98,13 @@ describe SimpleTemplates::Parser do
     end
 
     it "returns an error when an opening bracket is found without a closing bracket" do
-      SimpleTemplates.parse('foo < <bar>', ['bar']).errors.must_equal [
+      SimpleTemplates.parse('foo < <bar>', [:bar]).errors.must_equal [
         SimpleTemplates::Parser::Error.new("Expected placeholder name token at character position 5, but found a text token instead.")
       ]
     end
 
     it "returns an error when a closing bracket is found before an opening bracket" do
-      SimpleTemplates.parse('foo > <bar>', ['bar']).errors.must_equal [
+      SimpleTemplates.parse('foo > <bar>', [:bar]).errors.must_equal [
         SimpleTemplates::Parser::Error.new('Encountered unexpected token in stream (placeholder end), but expected to see one of the following types: placeholder start, quoted placeholder start, quoted placeholder end, text.')
       ]
     end
@@ -96,8 +117,9 @@ describe SimpleTemplates::Parser do
     end
 
     it "returns an error when an invalid placeholder name is found" do
-      SimpleTemplates.parse('foo <baz>', ['bar']).errors.must_equal [
-        SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'baz' found starting at position 4.")]
+      SimpleTemplates.parse('foo <baz>', [:bar]).errors.must_equal [
+        SimpleTemplates::Parser::Error.
+          new("Invalid SimpleTemplates::AST::Placeholder with contents, 'baz' found starting at position 4.")]
     end
 
     it "returns an error when a placeholder with newlines is found" do
@@ -122,7 +144,7 @@ describe SimpleTemplates::Parser do
     end
 
 
-    it "returns an multiple errors when there are multiple invalid placeholders" do
+    it "returns an multiple errors when there are multiple non-whitelisted placeholders" do
       SimpleTemplates.parse('foo <baz> <buz>', []).errors.must_equal [
         SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'baz' found starting at position 4."),
         SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'buz' found starting at position 10.")

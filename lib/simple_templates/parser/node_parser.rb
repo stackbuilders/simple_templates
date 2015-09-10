@@ -14,15 +14,22 @@ module SimpleTemplates
         tokens.any? && self::STARTING_TOKENS.include?(tokens.first.type)
       end
 
-      def initialize(unescapes, tokens, whitelisted_placeholders)
+      def initialize(unescapes, tokens, allowed_placeholders = nil)
         @unescapes                = unescapes.to_h.clone.freeze
         @tokens                   = tokens.clone.freeze
-        @whitelisted_placeholders = whitelisted_placeholders.clone.freeze
+
+        # Placeholders to match are mapped to strings for our validity checks.
+        # This is because if we go the other way and convert all possible
+        # placeholder names to symbols before comparing to the whitelist, we
+        # could cause a memory leak by allocating an infinite amount of symbols
+        # that won't be garbage-collected.
+        @allowed_placeholders = allowed_placeholders &&
+                                allowed_placeholders.map(&:to_s).freeze
       end
 
       private
 
-      attr_reader :tokens, :whitelisted_placeholders, :unescapes
+      attr_reader :tokens, :allowed_placeholders, :unescapes
     end
   end
 end
