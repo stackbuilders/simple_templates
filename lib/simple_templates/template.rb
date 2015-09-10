@@ -1,5 +1,7 @@
 require 'set'
 
+require 'simple_templates/AST/placeholder'
+
 module SimpleTemplates
 
   # A `Template` is a renderable collection of SimpleTemplates::AST nodes.
