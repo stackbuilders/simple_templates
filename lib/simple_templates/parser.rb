@@ -1,3 +1,4 @@
+require 'simple_templates/parser/error'
 require 'simple_templates/parser/placeholder'
 require 'simple_templates/parser/text'
 
