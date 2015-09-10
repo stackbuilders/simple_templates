@@ -1,5 +1,3 @@
-require "strscan"
-
 require 'simple_templates/lexer'
 require 'simple_templates/parser'
 require 'simple_templates/unescapes'
