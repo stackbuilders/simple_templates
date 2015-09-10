@@ -23,9 +23,8 @@ module SimpleTemplates
         # placeholder names to symbols before comparing to the whitelist, we
         # could cause a memory leak by allocating an infinite amount of symbols
         # that won't be garbage-collected.
-        @allowed_placeholders = allowed_placeholders ?
-                                  allowed_placeholders.map(&:to_s).freeze :
-                                  nil
+        @allowed_placeholders = allowed_placeholders &&
+                                allowed_placeholders.map(&:to_s).freeze
       end
 
       private

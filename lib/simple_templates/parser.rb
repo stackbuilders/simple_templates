@@ -21,9 +21,8 @@ module SimpleTemplates
         @unescapes            = unescapes.clone.freeze
         @tokens               = tokens.clone.freeze
 
-        @allowed_placeholders = !allowed_placeholders.nil? ?
-                                  allowed_placeholders.clone.freeze :
-                                  nil
+        @allowed_placeholders = allowed_placeholders &&
+                                allowed_placeholders.clone.freeze
       end
 
       # Returns a Parser::Result containing a Template if parsing was successful,
