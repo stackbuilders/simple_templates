@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+lib_dir = File.expand_path("../../lib", __FILE__)
+$:<<lib_dir unless $:.include?(lib_dir)
+
+require 'simple_templates'
+
+template = ARGV.shift or
+  abort "Usage: #{$0} \"<person> has <pet>\" person:Bob pet:dog"
+
+args = Hash[ARGV.map{|v| k,v = v.split(":",2); [k.to_sym, v]}]
+
+puts SimpleTemplates.parse(template).render(args)

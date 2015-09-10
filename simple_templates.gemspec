@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.summary = "Minimalistic templates engine"
   s.license = "Apache 2.0"
   s.files = `git ls-files`.split("\n")
+  s.executables << "simple-template"
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.required_ruby_version = ">= 2.0.0"
   %w{rake minitest simplecov coveralls guard-minitest}.each do |name|
