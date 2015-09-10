@@ -27,7 +27,7 @@ module SimpleTemplates
   #   errors
   #   => [...] # unknown placeholder
   #
-  def self.parse(raw_template_string, allowed_placeholders)
+  def self.parse(raw_template_string, allowed_placeholders = nil)
     Template.new(
       *Parser.new(
         Unescapes.new('<', '>'),
