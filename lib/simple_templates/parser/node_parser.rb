@@ -14,7 +14,7 @@ module SimpleTemplates
         tokens.any? && self::STARTING_TOKENS.include?(tokens.first.type)
       end
 
-      def initialize(unescapes, tokens, allowed_placeholders)
+      def initialize(unescapes, tokens, allowed_placeholders = nil)
         @unescapes                = unescapes.to_h.clone.freeze
         @tokens                   = tokens.clone.freeze
 
