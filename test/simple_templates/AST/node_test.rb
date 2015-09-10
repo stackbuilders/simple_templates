@@ -43,7 +43,7 @@ describe SimpleTemplates::AST::Node do
       }.must_raise NotImplementedError
     end
     it "succeeds" do
-      impl.render(context)
+      impl.render(context).must_be_nil
     end
   end
 
