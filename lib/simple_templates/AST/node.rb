@@ -17,6 +17,10 @@ module SimpleTemplates
         allowed
       end
 
+      def name
+        self.class.to_s.split('::').last
+      end
+
       # :nocov:
       def render(context)
         raise NotImplementedError

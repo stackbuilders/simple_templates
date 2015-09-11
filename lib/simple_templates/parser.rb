@@ -70,7 +70,7 @@ module SimpleTemplates
 
       def invalid_node_content_errors(ast)
         ast.reject(&:allowed?).map do |node|
-          Error.new("Invalid #{node.class} with contents, '#{node.contents}' " +
+          Error.new("Invalid #{node.name} with contents, '#{node.contents}' " +
           "found starting at position #{node.pos}.")
         end
       end
