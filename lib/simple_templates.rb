@@ -11,7 +11,7 @@ module SimpleTemplates
   #
   # @param raw_template_string      String        the template to render
   # @param allowed_placeholders Array[String] list of allowed placeholders
-  # @returns Array[SimpleTemplates::Template, Array, Array]
+  # @return [Array<SimpleTemplates::Template, Array, Array>]
   #   template, array of errors, array of remaining tokens if error
   #
   # @example template without errors
