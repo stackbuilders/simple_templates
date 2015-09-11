@@ -29,7 +29,7 @@ describe SimpleTemplates::Parser do
 
       SimpleTemplates.parse('foo <bar>', []).must_equal SimpleTemplates::Template.new(
         [SimpleTemplates::AST::Text.new('foo ', 0, true), pholder],
-        [SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'bar' found starting at position 4.")],
+        [SimpleTemplates::Parser::Error.new("Invalid Placeholder with contents, 'bar' found starting at position 4.")],
         []
       )
     end
@@ -112,14 +112,14 @@ describe SimpleTemplates::Parser do
     it "returns errors about invalid placeholders encountered before a syntactical error" do
       SimpleTemplates.parse('foo <baz> >', []).errors.must_equal [
         SimpleTemplates::Parser::Error.new('Encountered unexpected token in stream (placeholder end), but expected to see one of the following types: placeholder start, quoted placeholder start, quoted placeholder end, text.'),
-        SimpleTemplates::Parser::Error.new('Invalid SimpleTemplates::AST::Placeholder with contents, \'baz\' found starting at position 4.')
+        SimpleTemplates::Parser::Error.new('Invalid Placeholder with contents, \'baz\' found starting at position 4.')
       ]
     end
 
     it "returns an error when an invalid placeholder name is found" do
       SimpleTemplates.parse('foo <baz>', [:bar]).errors.must_equal [
         SimpleTemplates::Parser::Error.
-          new("Invalid SimpleTemplates::AST::Placeholder with contents, 'baz' found starting at position 4.")]
+          new("Invalid Placeholder with contents, 'baz' found starting at position 4.")]
     end
 
     it "returns an error when a placeholder with newlines is found" do
@@ -146,8 +146,8 @@ describe SimpleTemplates::Parser do
 
     it "returns an multiple errors when there are multiple non-whitelisted placeholders" do
       SimpleTemplates.parse('foo <baz> <buz>', []).errors.must_equal [
-        SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'baz' found starting at position 4."),
-        SimpleTemplates::Parser::Error.new("Invalid SimpleTemplates::AST::Placeholder with contents, 'buz' found starting at position 10.")
+        SimpleTemplates::Parser::Error.new("Invalid Placeholder with contents, 'baz' found starting at position 4."),
+        SimpleTemplates::Parser::Error.new("Invalid Placeholder with contents, 'buz' found starting at position 10.")
       ]
     end
 
