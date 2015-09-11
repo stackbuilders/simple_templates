@@ -13,6 +13,8 @@ module SimpleTemplates
       end
 
       def initialize(unescapes, tokens, allowed_placeholders)
+        raise "Invalid Parser for String!" unless self.class.applicable?(tokens)
+
         @unescapes                = unescapes.to_h.clone.freeze
         @tokens                   = tokens.clone.freeze
 
