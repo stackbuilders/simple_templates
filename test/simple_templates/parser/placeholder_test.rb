@@ -6,15 +6,19 @@ describe SimpleTemplates::Parser::Text do
     let(:unescapes) { SimpleTemplates::Unescapes.new('<', '>') }
     let(:target) { SimpleTemplates::Parser::Placeholder }
     let(:ast_ph) { SimpleTemplates::AST::Placeholder }
-    let(:lexer) { SimpleTemplates::Lexer }
     let(:lexer_token) { SimpleTemplates::Lexer::Token }
     let(:parse_error) { SimpleTemplates::Parser::Error }
-
+    let(:valid_phs) { ['name'] }
+    let (:ph_tokens) do
+      [
+        lexer_token.new(:ph_start, '<', 0),
+        lexer_token.new(:ph_name, 'name', 1),
+        lexer_token.new(:ph_end, '>', 9),
+      ]
+    end
 
     describe 'with a placeholder as the first part of the input' do
-      let(:raw_input) { "<1_name_1> some text" }
-      let(:tokens) { lexer.new(delimiter, raw_input).tokenize }
-      let(:valid_phs) { ['1_name_1'] }
+      let(:tokens) { ph_tokens << lexer_token.new(:text, ' some text', 10) }
 
       it 'returns no errors' do
         _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
@@ -23,21 +27,17 @@ describe SimpleTemplates::Parser::Text do
 
       it 'returns the remaining tokens after the placeholder' do
         _, _, remaining_tokens = target.new(unescapes, tokens, valid_phs).parse
-
         remaining_tokens.must_equal [lexer_token.new(:text, ' some text', 10)]
       end
 
       it 'returns a AST placeholder' do
         placeholder_ast, _, _ = target.new(unescapes, tokens, valid_phs).parse
-
-        placeholder_ast.must_equal [ast_ph.new('1_name_1', 0, true)]
+        placeholder_ast.must_equal [ast_ph.new('name', 0, true)]
       end
     end
 
     describe 'with no placeholder as the first part of the input' do
-      let(:raw_input) { "hello <1_name_1>" }
-      let(:tokens) { lexer.new(delimiter, raw_input).tokenize }
-      let(:valid_phs) { ['1_name_1'] }
+      let(:tokens) { ph_tokens.unshift(lexer_token.new(:text, 'hello ', 0)) }
 
       it 'returns an error about not finding the placeholder' do
         _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
@@ -58,9 +58,13 @@ describe SimpleTemplates::Parser::Text do
     end
 
     describe 'with an empty placeholder' do
-      let(:raw_input) { "<> some text" }
-      let(:tokens) { lexer.new(delimiter, raw_input).tokenize }
-      let(:valid_phs) { ['1_name_1'] }
+      let(:tokens) do
+        [
+          lexer_token.new(:ph_start, '<', 0),
+          lexer_token.new(:ph_end, '>', 1),
+          lexer_token.new(:text,  ' some text', 2)
+        ]
+      end 
 
       it 'returns an error about not finding the placeholder' do
         _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
@@ -81,10 +85,16 @@ describe SimpleTemplates::Parser::Text do
     end
 
     describe 'with an invalid placeholder name' do
-      let(:raw_input) { "<name-> some text" }
-      let(:tokens) { lexer.new(delimiter, raw_input).tokenize }
-      let(:valid_phs) { ['name'] }
-
+      let(:tokens) do
+        [
+          lexer_token.new(:ph_start, '<', 0),
+          lexer_token.new(:ph_name, 'name', 1),
+          lexer_token.new(:text, '-', 5),
+          lexer_token.new(:ph_end, '>', 6),
+          lexer_token.new(:text, ' some text', 7),
+        ]
+      end
+ 
       it 'returns an error about not finding the placeholder' do
         _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
         errors.must_equal [
@@ -104,9 +114,12 @@ describe SimpleTemplates::Parser::Text do
     end
 
     describe 'with a placeholder end as the first part of the input' do
-      let(:raw_input) { "> some text" }
-      let(:tokens) { lexer.new(delimiter, raw_input).tokenize }
-      let(:valid_phs) { ['name'] }
+      let(:tokens) do
+        [
+          lexer_token.new(:ph_end, '>', 0),
+          lexer_token.new(:text, ' some text', 1),
+        ]
+      end
 
       it 'returns an error about not finding the placeholder' do
         _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
