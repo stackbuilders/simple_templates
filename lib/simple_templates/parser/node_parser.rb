@@ -2,16 +2,25 @@ require 'set'
 
 module SimpleTemplates
   class Parser
+    # A Base class for the Placeholders and Text parsers
     class NodeParser
 
       # The Base class doesn't accept any tokens for parsing, since it isn't
       # supposed to be instantiated.
+      # @return [Set<Object>]
       STARTING_TOKENS = Set[]
 
+      # Checks if the class is applicable for the first token in the list
+      # @param tokens <Array[SimpleTemplates::Lexer::Token]> a list of tokens
       def self.applicable?(tokens)
         tokens.any? && self::STARTING_TOKENS.include?(tokens.first.type)
       end
 
+      # Initializes a new NodeParser. Please note that this class is not
+      # supposed to be instantiated
+      # @param unescapes [SimpleTemplates::Unescapes] a Unescapes object
+      # @param tokens <Array[SimpleTemplates::Lexer::Token]> a list of tokens
+      # @param allowed_placeholders <Array[String]> a list of allowed placeholders
       def initialize(unescapes, tokens, allowed_placeholders)
         @unescapes                = unescapes.to_h.clone.freeze
         @tokens                   = tokens.clone.freeze
