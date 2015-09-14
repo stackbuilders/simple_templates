@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.executables << "simple-template"
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.required_ruby_version = ">= 2.0.0"
-  %w{rake minitest simplecov coveralls guard-minitest}.each do |name|
+  %w{rake minitest simplecov coveralls guard-minitest yard}.each do |name|
     s.add_development_dependency(name)
   end
   s.add_development_dependency("guard", ">=2.12.8", "<3")
