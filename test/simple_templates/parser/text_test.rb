@@ -114,24 +114,5 @@ describe SimpleTemplates::Parser::Text do
         txt_nodes.must_equal [ast_text.new("hello \n", 0, true)]
       end
     end
-
-    describe 'with a placeholder at the beginning of input' do
-      let(:tokens) { ph_tokens << lexer_token.new(:text, ' hello', 6) }
-
-      it 'returns remaining tokens with the placeholder' do
-        _, _, remaining_tokens = target.new(unescapes, tokens, valid_phs).parse
-        remaining_tokens.must_equal tokens
-      end
-
-      it 'returns no errors' do
-        _, errors_list, _ = target.new(unescapes, tokens, valid_phs).parse
-        errors_list.must_be_empty
-      end
-
-      it 'returns nil in the text nodes' do
-        txt_nodes, _, _ = target.new(unescapes, tokens, valid_phs).parse
-        txt_nodes.must_equal [nil]
-      end
-    end
   end
 end

@@ -1,6 +1,6 @@
 require_relative '../../test_helper'
 
-describe SimpleTemplates::Parser::Text do
+describe SimpleTemplates::Parser::Placeholder do
   describe '#parse' do
     let(:delimiter) { SimpleTemplates::Delimiter.new(/\\</, /\\>/, /\</, /\>/) }
     let(:unescapes) { SimpleTemplates::Unescapes.new('<', '>') }
@@ -39,21 +39,10 @@ describe SimpleTemplates::Parser::Text do
     describe 'with no placeholder as the first part of the input' do
       let(:tokens) { ph_tokens.unshift(lexer_token.new(:text, 'hello ', 0)) }
 
-      it 'returns an error about not finding the placeholder' do
-        _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
-        errors.must_equal [
-          parse_error.new('Expected placeholder start token at character position 0, but found a text token instead.')
-        ]
-      end
-
-      it 'returns nil as the remaining tokens' do
-        _, _, remaining_tokens = target.new(unescapes, tokens, valid_phs).parse
-        remaining_tokens.must_be_nil
-      end
-
-      it 'returns an empty list of AST placeholders' do
-        placeholder_ast, _, _ = target.new(unescapes, tokens, valid_phs).parse
-        placeholder_ast.must_be_empty
+      it 'raises an error' do
+        -> {
+          target.new(unescapes, tokens, valid_phs)
+        }.must_raise ArgumentError
       end
     end
 
@@ -108,32 +97,6 @@ describe SimpleTemplates::Parser::Text do
       end
 
       it 'returns an empty list of AST placeholders' do
-        placeholder_ast, _, _ = target.new(unescapes, tokens, valid_phs).parse
-        placeholder_ast.must_be_empty
-      end
-    end
-
-    describe 'with a placeholder end as the first part of the input' do
-      let(:tokens) do
-        [
-          lexer_token.new(:ph_end, '>', 0),
-          lexer_token.new(:text, ' some text', 1),
-        ]
-      end
-
-      it 'returns an error about not finding the placeholder' do
-        _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
-        errors.must_equal [
-          parse_error.new('Expected placeholder start token at character position 0, but found a placeholder end token instead.')
-        ]
-      end
-
-      it 'returns nil as the remaining tokens' do
-        _, _, remaining_tokens = target.new(unescapes, tokens, valid_phs).parse
-        remaining_tokens.must_be_nil
-      end
-
-      it 'returns an empty list of AST placeholers' do
         placeholder_ast, _, _ = target.new(unescapes, tokens, valid_phs).parse
         placeholder_ast.must_be_empty
       end
