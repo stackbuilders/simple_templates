@@ -7,10 +7,10 @@ Gem::Specification.new do |s|
   s.name = "simple_templates"
   s.version = SimpleTemplates::VERSION
   s.authors = ["Michal Papis"]
-  s.email = ["mpapis@gmail.com"]
+  s.email = ["support@stackbuilders.com"]
   s.homepage = "https://github.com/stackbuilders/simple_templates"
   s.summary = "Minimalistic templates engine"
-  s.license = "Apache 2.0"
+  s.license = "MIT"
   s.files = `git ls-files`.split("\n")
   s.executables << "simple-template"
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
