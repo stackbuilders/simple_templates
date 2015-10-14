@@ -14,6 +14,14 @@ describe SimpleTemplates::Parser do
       )
     end
 
+    it "parses a two-byte unicode character" do
+      SimpleTemplates.parse('Ford® Flex').must_equal SimpleTemplates::Template.new(
+        [SimpleTemplates::AST::Text.new('Ford® Flex', 0, true)],
+        [],
+        []
+      )
+    end
+
     it "marks all nodes as allowed and returns no errors if the allowed_placeholders is nil" do
       pholder = SimpleTemplates::AST::Placeholder.new('bar', 4, true)
 
