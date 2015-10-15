@@ -36,12 +36,10 @@ module SimpleTemplates
     private
 
     def next_token(tokens, ss)
-      token_type, pattern = current_matchers(tokens).
-                              find { |_, pattern| ss.check(pattern) }
+      pos = ss.pos
+      token_type, _ = current_matchers(tokens).find { |_, pattern| ss.scan(pattern) }
 
-      Token.new(token_type, ss.matched, ss.pos).tap do
-        ss.pos += ss.matched.length
-      end
+      Token.new(token_type, ss.matched, pos)
     end
 
     def current_matchers(tokens)
