@@ -2,10 +2,9 @@ require "coveralls"
 require "simplecov"
 
 SimpleCov.start do
-  formatter SimpleCov::Formatter::MultiFormatter[
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter,
-  ]
+  formatters = [ SimpleCov::Formatter::HTMLFormatter,
+                 Coveralls::SimpleCov::Formatter ]
+  formatter SimpleCov::Formatter::MultiFormatter.new(formatters)
   command_name "Unit Tests"
   add_filter "/test/"
 end
