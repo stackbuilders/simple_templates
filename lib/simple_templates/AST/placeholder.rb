@@ -9,7 +9,7 @@ module SimpleTemplates
     class Placeholder < Node
       #
       # Renders the substitutions in the input.
-      # Raises and error if it verifies it's not allowed. (see allowed?)
+      # Raises an error if it is not allowed. (see allowed?)
       # @param substitutions [Hash{ Symbol => String }]
       # @return [String] the content of the placeholder
       #

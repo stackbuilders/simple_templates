@@ -8,7 +8,7 @@ module SimpleTemplates
     # Recognizes a set of input tokens as a Placeholder.
     class Placeholder < NodeParser
 
-      # The expected tag order for a valid placeholder
+      # The expected tag order for a valid placeholder.
       EXPECTED_TAG_ORDER = [:ph_start, :ph_name, :ph_end]
 
       # The starting token that the input must have
@@ -20,12 +20,14 @@ module SimpleTemplates
       #   <Array[SimpleTemplates::Parser::Error]>,
       #   <Array[SimpleTemplates::Lexer::Token]>> an +Array+ with the
       #   AST::Placeholder as first element, a list of parser errors and a list
-      #   of the remaining tokens
+      #   of the remaining tokens.
       def parse
         errors = check_placeholder_syntax
 
+        remaining_tokens = []
+
         placeholder_ast = if errors.empty?
-          remaining_tokens = tokens[3..-1]
+          remaining_tokens = tokens[3..-1] || []
 
           allowed = allowed_placeholders.nil? ||
                     allowed_placeholders.include?(tag_name.content)

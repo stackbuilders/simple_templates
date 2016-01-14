@@ -13,6 +13,16 @@ describe SimpleTemplates::Parser::NodeParser do
   let(:impl)    {SimpleTemplates::Parser::TestNodeParserImpl}
   let(:example) {SimpleTemplates::Lexer::Token.new(:text, 'a', 0)}
 
+  describe "#initialize" do
+    it 'raises an error if the input is not valid' do
+      -> {
+      impl.new( SimpleTemplates::Unescapes.new('<'),
+                [SimpleTemplates::Lexer::Token.new(:ph_start, '<', 0)],
+                ['name'])
+      }.must_raise ArgumentError
+    end
+  end
+
   describe "#applicable?" do
     it "ignores missing" do
       impl.applicable?([]).must_equal false

@@ -8,7 +8,7 @@ module SimpleTemplates
   class Lexer
 
     # A +Struct+ for a Lexer::Token that takes the type, the content and
-    # position of a token
+    # position of a token.
     Token = Struct.new(:type, :content, :pos)
 
     # A Hash with the allowed +Regexp+ for a valid placeholder name
@@ -25,7 +25,7 @@ module SimpleTemplates
       @matchers_with_placeholder_name = VALID_PLACEHOLDER.merge(@matchers)
     end
 
-    # Tokenizes the raw input and returns a list of tokens
+    # Tokenizes the raw input and returns a list of tokens.
     # @return <Array[SimpleTemplates::Lexer::Token]>
     def tokenize
       tokens = []

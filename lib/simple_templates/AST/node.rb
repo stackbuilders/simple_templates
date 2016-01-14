@@ -3,7 +3,7 @@ module SimpleTemplates
   module AST
     #
     # Parent class for a node in the AST.
-    # This  class is not supposed to be instantiated
+    # This  class is not supposed to be instantiated.
     #
     # @!attribute [r] contents
     #   @return [String] the content of the node
@@ -15,7 +15,7 @@ module SimpleTemplates
       attr_reader :contents, :pos, :allowed
 
       # Initializes a new Node. Please note that this class is not supposed to
-      # be instantiated
+      # be instantiated.
       # @param contents [String] the content of the node
       # @param pos [Numbers] the position of the content in the input
       # @param allowed [Boolean] if the node is allowed
@@ -26,7 +26,7 @@ module SimpleTemplates
       end
 
       # Compares the node to other node by comparing the attributes of the
-      # objects
+      # objects.
       # @param other [SimpleTemplates::AST::Node]
       # @return [Boolean]
       def ==(other)
@@ -34,12 +34,12 @@ module SimpleTemplates
       end
 
       # Checks if the Node is allowed by returning the value in the class
-      # attribute +allowed+
+      # attribute +allowed+.
       def allowed?
         allowed
       end
 
-      # Returns only the name of the class without the namespace
+      # Returns only the name of the class without the namespace.
       # @return [String]
       def name
         self.class.to_s.split('::').last

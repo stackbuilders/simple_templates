@@ -32,7 +32,7 @@ module SimpleTemplates
     end
 
     # Returns a Parser::Result containing the parsed AST nodes, the errors
-    # found when parsing and the remaining tokens unparsed
+    # found when parsing and the remaining tokens that have not been parsed.
     # @return [Array<Array<SimpleTemplates::AST::Node>,
     #   Array<SimpleTemplates::Parser::Error>,
     #   Array<SimpleTemplates::Lexer::Token>>]
@@ -54,9 +54,15 @@ module SimpleTemplates
 
         else
           template, errors_result, remaining_tokens = parser.parse
+
+          if remaining_tokens.nil?
+            raise "Parser #{parser.class} shouldn't return nil remaining " +
+                  "tokens (should be an Array), please report this bug."
+          end
+
           if errors_result.empty?
             tok_stream = remaining_tokens
-            ast = ast.concat(template)
+            ast        = ast.concat(template)
 
           else
             # Once we get a syntax error, we can't really determine if anything
