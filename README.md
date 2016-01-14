@@ -47,5 +47,16 @@ So we get are going to get a list of errors when parsing
   => [...] # unknown placeholder
 ```
 
+##Tasks
+The default task executed by `rake` is only
+```
+rake test
+```
+
+Additionally you can generate the documentation by running
+```
+rake docs
+```
+
 ##License
 MIT. See [LICENSE](https://github.com/stackbuilders/simple_templates/blob/master/LICENSE)

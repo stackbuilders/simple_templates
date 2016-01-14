@@ -8,12 +8,19 @@ module SimpleTemplates
     # Recognizes a set of input tokens as a Placeholder.
     class Placeholder < NodeParser
 
+      # The expected tag order for a valid placeholder
       EXPECTED_TAG_ORDER = [:ph_start, :ph_name, :ph_end]
 
+      # The starting token that the input must have
       STARTING_TOKENS = Set[:ph_start]
 
       # If this stream starts with a placeholder token, parse out the
       # Placeholder, or a Result with errors indicating the syntax problem.
+      # @return <Array <Array[SimpleTemplates::AST::Placeholder]>,
+      #   <Array[SimpleTemplates::Parser::Error]>,
+      #   <Array[SimpleTemplates::Lexer::Token]>> an +Array+ with the
+      #   AST::Placeholder as first element, a list of parser errors and a list
+      #   of the remaining tokens
       def parse
         errors = check_placeholder_syntax
 
