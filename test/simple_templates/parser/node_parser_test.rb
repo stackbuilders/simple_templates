@@ -14,7 +14,7 @@ describe SimpleTemplates::Parser::NodeParser do
   let(:example) {SimpleTemplates::Lexer::Token.new(:text, 'a', 0)}
 
   describe "#initialize" do
-    it 'raises an error in the input is not valid' do
+    it 'raises an error if the input is not valid' do
       -> {
       impl.new( SimpleTemplates::Unescapes.new('<'),
                 [SimpleTemplates::Lexer::Token.new(:ph_start, '<', 0)],
