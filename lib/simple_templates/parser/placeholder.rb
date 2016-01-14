@@ -24,6 +24,8 @@ module SimpleTemplates
       def parse
         errors = check_placeholder_syntax
 
+        remaining_tokens = []
+
         placeholder_ast = if errors.empty?
           remaining_tokens = tokens[3..-1] || []
 
@@ -35,7 +37,7 @@ module SimpleTemplates
           [] # we don't have an AST portion to return if we encountered errors
         end
 
-        [placeholder_ast, errors, remaining_tokens || []]
+        [placeholder_ast, errors, remaining_tokens]
       end
 
       private
