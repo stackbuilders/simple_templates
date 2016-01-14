@@ -19,6 +19,8 @@ module SimpleTemplates
         else
           raise 'Unable to render invalid placeholder!'
         end
+      rescue KeyError
+        raise "\"#{contents}\" key missing. Unable to render \"#{contents}\" placeholder"
       end
     end
   end

@@ -10,7 +10,7 @@ describe SimpleTemplates::AST::Placeholder do
     it "fails when the placeholder name is not in the given Hash" do
       ->(){
         target.new('not_in_substitutions', 0, true).render(substitutions)
-      }.must_raise KeyError
+      }.must_raise RuntimeError
     end
 
     it "fails when the placeholder is marked as invalid" do
