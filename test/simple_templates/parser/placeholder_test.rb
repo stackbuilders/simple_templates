@@ -53,7 +53,7 @@ describe SimpleTemplates::Parser::Placeholder do
           lexer_token.new(:ph_end, '>', 1),
           lexer_token.new(:text,  ' some text', 2)
         ]
-      end 
+      end
 
       it 'returns an error about not finding the placeholder' do
         _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
@@ -62,9 +62,9 @@ describe SimpleTemplates::Parser::Placeholder do
         ]
       end
 
-      it 'returns nil as the remaining tokens' do
+      it 'returns an empty Array as the remaining tokens' do
         _, _, remaining_tokens = target.new(unescapes, tokens, valid_phs).parse
-        remaining_tokens.must_be_nil
+        remaining_tokens.must_be_empty
       end
 
       it 'returns an empty list of AST placeholders' do
@@ -83,7 +83,7 @@ describe SimpleTemplates::Parser::Placeholder do
           lexer_token.new(:text, ' some text', 7),
         ]
       end
- 
+
       it 'returns an error about not finding the placeholder' do
         _, errors, _ = target.new(unescapes, tokens, valid_phs).parse
         errors.must_equal [
@@ -91,12 +91,12 @@ describe SimpleTemplates::Parser::Placeholder do
         ]
       end
 
-      it 'returns nil as the remaining tokens' do
+      it 'returns an empty Array of remaining tokens' do
         _, _, remaining_tokens = target.new(unescapes, tokens, valid_phs).parse
-        remaining_tokens.must_be_nil
+        remaining_tokens.must_be_empty
       end
 
-      it 'returns an empty list of AST placeholders' do
+      it 'returns an empty Array of AST placeholders' do
         placeholder_ast, _, _ = target.new(unescapes, tokens, valid_phs).parse
         placeholder_ast.must_be_empty
       end

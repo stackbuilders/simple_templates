@@ -25,7 +25,7 @@ module SimpleTemplates
         errors = check_placeholder_syntax
 
         placeholder_ast = if errors.empty?
-          remaining_tokens = tokens[3..-1]
+          remaining_tokens = tokens[3..-1] || []
 
           allowed = allowed_placeholders.nil? ||
                     allowed_placeholders.include?(tag_name.content)
@@ -35,7 +35,7 @@ module SimpleTemplates
           [] # we don't have an AST portion to return if we encountered errors
         end
 
-        [placeholder_ast, errors, remaining_tokens]
+        [placeholder_ast, errors, remaining_tokens || []]
       end
 
       private

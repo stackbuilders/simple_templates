@@ -39,7 +39,7 @@ module SimpleTemplates
           txt_node = txt_node.nil? ? this_txt_node : txt_node + this_txt_node
         end
 
-        [[txt_node], [], toks]
+        [[txt_node], [], toks || []]
       end
 
       private
