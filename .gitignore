@@ -2,3 +2,5 @@ Gemfile.lock
 coverage/
 *.gem
 *.DS_Store
+.yardoc/
+doc/
