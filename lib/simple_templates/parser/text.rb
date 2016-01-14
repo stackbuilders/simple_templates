@@ -20,12 +20,12 @@ module SimpleTemplates
       }
 
       # It parses the stream, if it starts with a text node then it parses out
-      # the text until it is not applicable for the input anymore
+      # the text until it is not applicable for the input anymore.
       # @return <Array <Array[SimpleTemplates::AST::Text]>,
       #   <Array>,
       #   <Array[SimpleTemplates::Lexer::Token]>> an +Array+ with a list of
       #   AST::Text as first element, always an Empty list of Errors and the
-      #   remaining unparsed tokens
+      #   remaining unparsed tokens.
       def parse
         txt_node = nil
         toks     = tokens.dup

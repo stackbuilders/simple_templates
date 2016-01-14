@@ -32,7 +32,7 @@ module SimpleTemplates
     end
 
     # Returns a Parser::Result containing the parsed AST nodes, the errors
-    # found when parsing and the remaining tokens unparsed
+    # found when parsing and the remaining tokens that have not been parsed.
     # @return [Array<Array<SimpleTemplates::AST::Node>,
     #   Array<SimpleTemplates::Parser::Error>,
     #   Array<SimpleTemplates::Lexer::Token>>]

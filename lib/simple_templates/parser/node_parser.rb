@@ -17,7 +17,8 @@ module SimpleTemplates
       end
 
       # Initializes a new NodeParser. Please note that this class is not
-      # supposed to be instantiated
+      # supposed to be instantiated.
+      # Raises an error if it is not applicable.
       # @param unescapes [SimpleTemplates::Unescapes] a Unescapes object
       # @param tokens <Array[SimpleTemplates::Lexer::Token]> a list of tokens
       # @param allowed_placeholders <Array[String]> a list of allowed placeholders
