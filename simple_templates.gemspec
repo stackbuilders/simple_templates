@@ -6,8 +6,8 @@ require File.expand_path("../lib/simple_templates/version.rb", __FILE__)
 Gem::Specification.new do |s|
   s.name = "simple_templates"
   s.version = SimpleTemplates::VERSION
-  s.authors = ["Michal Papis"]
-  s.email = ["support@stackbuilders.com"]
+  s.authors = ['Justin Leitgeb', 'Michal Papis']
+  s.email = ['support@stackbuilders.com', 'mpapis@gmail.com']
   s.homepage = "https://github.com/stackbuilders/simple_templates"
   s.summary = "Minimalistic templates engine"
   s.license = "MIT"
