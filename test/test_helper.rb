@@ -11,7 +11,6 @@ end
 
 Coveralls.noisy = true unless ENV["CI"]
 
-gem "minitest"
 require "minitest/autorun" unless $0=="-e" # skip in guard
 require "minitest/unit"
 
