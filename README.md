@@ -1,6 +1,7 @@
 # simple_templates
 
-[![Circle CI](https://circleci.com/gh/stackbuilders/simple_templates.svg?style=shield&circle-token=caa5840efa6767d08ac3082270580367327a8906)](https://circleci.com/gh/stackbuilders/simple_templates)
+[![Build Status](https://travis-ci.org/stackbuilders/simple_templates.svg?branch=master)](https://travis-ci.org/stackbuilders/simple_templates)
+
 
 `simple_templates` is a minimalistic templates engine. This gem allows you to
 work with several types of templates.
