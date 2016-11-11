@@ -20,8 +20,11 @@ module SimpleTemplates
           raise 'Unable to render invalid placeholder!'
         end
       rescue KeyError
-        raise "\"#{contents}\" key missing. Unable to render \"#{contents}\" placeholder"
+        raise InterpolationError.new(
+          "\"#{contents}\" key missing. Unable to render \"#{contents}\" placeholder.")
       end
     end
+
+    class InterpolationError < RuntimeError; end
   end
 end
