@@ -1,6 +1,8 @@
 require 'set'
+require 'json'
 
 require 'simple_templates/AST/placeholder'
+require 'simple_templates/template_deserializer'
 
 module SimpleTemplates
   #
@@ -18,6 +20,15 @@ module SimpleTemplates
   class Template
 
     attr_reader :ast, :errors, :remaining_tokens
+
+    # Creates a new Template form a JSON string
+    # @return [SimpleTemplates::Template]
+    def self.from_json(json)
+      deserialized_template = SimpleTemplates::TemplateDeserializer.new(JSON.parse(json))
+      new(deserialized_template.ast,
+          deserialized_template.errors,
+          deserialized_template.remaining_tokens)
+    end
 
     # Initializes a new Template
     # @param ast <Array[SimpleTemplates::AST::Node]> list of AST nodes

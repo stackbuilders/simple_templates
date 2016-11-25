@@ -74,6 +74,14 @@ describe SimpleTemplates::Template do
     end
   end
 
+  describe '.from_json' do
+    it 'deserializes a template from a JSON string' do
+      template = SimpleTemplates.parse('Hi <name>', %w[date])
+      template_as_json = template.to_json
+      template.must_equal(SimpleTemplates::Template.from_json(template_as_json))
+    end
+  end
+
   describe "#==" do
     it "compares the ast" do
       SimpleTemplates::Template.new([:ast_a], [], []).wont_equal SimpleTemplates::Template.new([:ast_b], [], [])
