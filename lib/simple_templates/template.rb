@@ -54,6 +54,16 @@ module SimpleTemplates
       ast.select{ |node| SimpleTemplates::AST::Placeholder === node }.to_set
     end
 
+    # Converts a +SimpleTemplates::Template+ to JSON string.
+    # return [String]
+    def to_json
+      {
+        ast: ast.map(&:to_h),
+        errors: errors.map(&:to_h),
+        remaining_tokens: remaining_tokens.map(&:to_h)
+      }.to_json
+    end
+
     # Compares a +Template+ with another by comparing the +ast+, +errors+
     # and the +remaining_tokens+ of each one
     def ==(other)
