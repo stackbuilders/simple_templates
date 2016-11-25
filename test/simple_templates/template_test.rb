@@ -42,42 +42,36 @@ describe SimpleTemplates::Template do
     end
   end
 
-  describe '#to_json' do
+  describe '#to_h' do
     it 'serializes a template to a JSON string' do
-      template_as_json = %(
+      template_as_hash = {
+        ast: [{
+          contents: "Hi ",
+          pos: 0,
+          allowed: true,
+          class: SimpleTemplates::AST::Text
+        },
         {
-           "ast":[
-              {
-                 "contents":"Hi ",
-                 "pos":0,
-                 "allowed":true,
-                 "class":"SimpleTemplates::AST::Text"
-              },
-              {
-                 "contents":"name",
-                 "pos":3,
-                 "allowed":false,
-                 "class":"SimpleTemplates::AST::Placeholder"
-              }
-           ],
-           "errors":[
-              {
-                 "message":"Invalid Placeholder with contents, 'name' found starting at position 3."
-              }
-           ],
-           "remaining_tokens":[]
-        }
-      )
+          contents: "name",
+          pos: 3,
+          allowed: false,
+          class: SimpleTemplates::AST::Placeholder
+        }],
+        errors: [{
+          message: "Invalid Placeholder with contents, 'name' found starting at position 3."
+        }],
+        remaining_tokens: []
+      }
 
       template = SimpleTemplates.parse('Hi <name>', %w[date])
-      JSON.parse(template.to_json).must_equal(JSON.parse(template_as_json))
+      template.to_h.must_equal(template_as_hash)
     end
   end
 
   describe '.from_json' do
     it 'deserializes a template from a JSON string' do
       template = SimpleTemplates.parse('Hi <name>', %w[date])
-      template_as_json = template.to_json
+      template_as_json = JSON.dump(template.to_h)
       template.must_equal(SimpleTemplates::Template.from_json(template_as_json))
     end
   end

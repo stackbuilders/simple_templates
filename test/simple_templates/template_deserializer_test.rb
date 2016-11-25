@@ -3,7 +3,7 @@ require_relative "../test_helper"
 describe SimpleTemplates::TemplateDeserializer do
   before do
     @serialized_template = JSON.parse(
-      SimpleTemplates.parse('Hi <name>', %w[date]).to_json)
+      SimpleTemplates.parse('Hi <name>', %w[date]).to_h.to_json)
   end
 
   let(:template) { SimpleTemplates::TemplateDeserializer.new(@serialized_template) }
