@@ -6,16 +6,36 @@ describe SimpleTemplates::TemplateDeserializer do
       SimpleTemplates.parse('Hi <name>', %w[date]).to_h.to_json)
   end
 
-  let(:template) { SimpleTemplates::TemplateDeserializer.new(@serialized_template) }
+  let(:template) do
+    SimpleTemplates::TemplateDeserializer.new(@serialized_template)
+  end
 
   describe "#ast" do
-    it 'creates an array of text or placeholders' do
+    it 'creates an array of AST nodes' do
       template.ast.map(&:class).must_equal [
         SimpleTemplates::AST::Text,
         SimpleTemplates::AST::Placeholder
       ]
 
       template.ast.map(&:contents).must_equal ["Hi ", "name"]
+    end
+
+    it 'raises an error if any class contains an unexpected string' do
+      harmful_serialized_template = {
+        "ast" => [
+          { "class" => "SimpleTemplates::AST::Placeholder" },
+          { "class" => "harmful code" },
+        ],
+        "errors" => [],
+        "remaining_tokens" => []
+      }
+
+      bad_template = SimpleTemplates::TemplateDeserializer.new(
+        harmful_serialized_template)
+
+      -> {
+        bad_template.ast
+      }.must_raise SimpleTemplates::InvalidClassForDeserializationError
     end
   end
 

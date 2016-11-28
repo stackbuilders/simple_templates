@@ -5,11 +5,21 @@ module SimpleTemplates
     end
 
     def ast
-      template['ast'].map do |node|
-        Object.const_get(node['class']).new(node['contents'],
-                                            node['pos'],
-                                            node['allowed'])
+      nodes = []
+      template['ast'].each do |node|
+        klass = node['class']
+        if valid_ast_class?(klass)
+          ast_class = Object.const_get(klass)
+          nodes << ast_class.new(node['contents'],
+                                 node['pos'],
+                                 node['allowed'])
+        else
+          raise InvalidClassForDeserializationError.new(
+            "'#{klass}' is not allowed for deserialization")
+        end
       end
+
+      nodes
     end
 
     def errors
@@ -29,5 +39,14 @@ module SimpleTemplates
     private
 
     attr_reader :template
+
+    def valid_ast_class?(ast_class)
+      [
+        "SimpleTemplates::AST::Placeholder",
+        "SimpleTemplates::AST::Text",
+      ].include?(ast_class)
+    end
   end
+
+  class InvalidClassForDeserializationError < RuntimeError; end
 end
