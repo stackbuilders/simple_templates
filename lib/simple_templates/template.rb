@@ -20,7 +20,7 @@ module SimpleTemplates
 
     attr_reader :ast, :errors, :remaining_tokens
 
-    # Creates a new Template form a JSON string
+    # Creates a new Template from a JSON string
     # @return [SimpleTemplates::Template]
     def self.from_json(json)
       deserialized_template = SimpleTemplates::TemplateDeserializer.new(JSON.parse(json))
