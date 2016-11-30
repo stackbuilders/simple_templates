@@ -1,13 +1,10 @@
 require_relative "../test_helper"
 
 describe SimpleTemplates::TemplateDeserializer do
-  before do
-    @serialized_template = JSON.parse(
-      SimpleTemplates.parse('Hi <name>', %w[date]).to_h.to_json)
-  end
-
   let(:template) do
-    SimpleTemplates::TemplateDeserializer.new(@serialized_template)
+    serialized_template = JSON.parse(
+      SimpleTemplates.parse('Hi <name>', %w[date]).to_h.to_json)
+    SimpleTemplates::TemplateDeserializer.new(serialized_template)
   end
 
   describe "#ast" do
