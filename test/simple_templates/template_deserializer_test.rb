@@ -35,7 +35,7 @@ describe SimpleTemplates::TemplateDeserializer do
 
       -> {
         bad_template.ast
-      }.must_raise SimpleTemplates::InvalidClassForDeserializationError
+      }.must_raise SimpleTemplates::DeserializationError
     end
   end
 
