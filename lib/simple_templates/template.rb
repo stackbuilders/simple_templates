@@ -1,3 +1,4 @@
+require 'json'
 require 'set'
 
 require 'simple_templates/AST/placeholder'
@@ -72,6 +73,12 @@ module SimpleTemplates
         errors: errors.map(&:to_h),
         remaining_tokens: remaining_tokens.map(&:to_h)
       }
+    end
+
+    # Converts a +SimpleTemplates::Template+ to a JSON string
+    # return [String] The JSON representation for this template
+    def to_json
+      self.to_h.to_json
     end
 
     # Compares a +Template+ with another by comparing the +ast+, +errors+
