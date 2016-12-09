@@ -1,6 +1,8 @@
+require 'json'
 require 'set'
 
 require 'simple_templates/AST/placeholder'
+require 'simple_templates/template_deserializer'
 
 module SimpleTemplates
   #
@@ -18,6 +20,15 @@ module SimpleTemplates
   class Template
 
     attr_reader :ast, :errors, :remaining_tokens
+
+    # Creates a new Template from a JSON string
+    # @return [SimpleTemplates::Template]
+    def self.from_json(json)
+      deserialized_template = SimpleTemplates::TemplateDeserializer.new(JSON.parse(json))
+      new(deserialized_template.ast,
+          deserialized_template.errors,
+          deserialized_template.remaining_tokens)
+    end
 
     # Initializes a new Template
     # @param ast <Array[SimpleTemplates::AST::Node]> list of AST nodes
@@ -52,6 +63,22 @@ module SimpleTemplates
     # @return [Set<SimpleTemplates::AST::Placeholder>]
     def placeholders
       ast.select{ |node| SimpleTemplates::AST::Placeholder === node }.to_set
+    end
+
+    # Converts a +SimpleTemplates::Template+ to Hash.
+    # return [Hash]
+    def to_h
+      {
+        ast: ast.map(&:to_h),
+        errors: errors.map(&:to_h),
+        remaining_tokens: remaining_tokens.map(&:to_h)
+      }
+    end
+
+    # Converts a +SimpleTemplates::Template+ to a JSON string
+    # return [String] The JSON representation for this template
+    def to_json
+      self.to_h.to_json
     end
 
     # Compares a +Template+ with another by comparing the +ast+, +errors+

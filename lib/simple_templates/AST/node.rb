@@ -45,6 +45,17 @@ module SimpleTemplates
         self.class.to_s.split('::').last
       end
 
+      # Converts the node to a hash.
+      # @return [Hash]
+      def to_h
+        {
+          contents: contents,
+          pos: pos,
+          allowed: allowed,
+          class: self.class
+        }
+      end
+
       # Not implemented method to render a Node that must be especialized by
       # the class inheriting from this class.
       # @param context [Hash{ Symbol => String }]

@@ -47,4 +47,15 @@ describe SimpleTemplates::AST::Node do
     end
   end
 
+  describe '#to_h' do
+    it 'converts a node to a hash' do
+      node = SimpleTemplates::AST::TestNodeImpl.new("a", 2, false)
+      node.to_h.must_equal({
+        contents: 'a',
+        pos: 2,
+        allowed: false,
+        class: SimpleTemplates::AST::TestNodeImpl
+      })
+    end
+  end
 end

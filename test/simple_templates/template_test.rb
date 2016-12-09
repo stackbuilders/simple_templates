@@ -42,6 +42,40 @@ describe SimpleTemplates::Template do
     end
   end
 
+  describe '#to_json' do
+    it 'serializes a template to a JSON string' do
+      template_as_json = {
+        ast: [{
+          contents: "Hi ",
+          pos: 0,
+          allowed: true,
+          class: SimpleTemplates::AST::Text
+        },
+        {
+          contents: "name",
+          pos: 3,
+          allowed: false,
+          class: SimpleTemplates::AST::Placeholder
+        }],
+        errors: [{
+          message: "Invalid Placeholder with contents, 'name' found starting at position 3."
+        }],
+        remaining_tokens: []
+      }.to_json
+
+      template = SimpleTemplates.parse('Hi <name>', %w[date])
+      template.to_json.must_equal(template_as_json)
+    end
+  end
+
+  describe '.from_json' do
+    it 'deserializes a template from a JSON string' do
+      template = SimpleTemplates.parse('Hi <name>', %w[date])
+      template_as_json = JSON.dump(template.to_h)
+      template.must_equal(SimpleTemplates::Template.from_json(template_as_json))
+    end
+  end
+
   describe "#==" do
     it "compares the ast" do
       SimpleTemplates::Template.new([:ast_a], [], []).wont_equal SimpleTemplates::Template.new([:ast_b], [], [])
