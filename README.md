@@ -6,24 +6,27 @@
 `simple_templates` is a minimalistic templates engine. This gem allows you to
 work with several types of templates.
 
-##Installation
+## Installation
 
 Clone the project
+
 ```
 git@github.com:stackbuilders/simple_templates.git
 ```
 
 Install the dependencies
+
 ```
 bundle install
 ```
 
 Run the tests
+
 ```
 rake test
 ```
 
-##Quick Start
+## Quick Start
 
 The basic use of the library can be seen like this:
 
@@ -32,6 +35,7 @@ a list of `String` containing the allowed placeholders, if it is `nil`, then all
 the placeholders are allowed.
 
 A example without errors, that allows us to call the method `render`
+
 ```ruby
   template = SimpleTemplates.parse("Hi <name>", %w[name])
   template.render({ name: "Bob" }) if template.errors.empty?
@@ -42,22 +46,27 @@ A example without errors, that allows us to call the method `render`
 
 An example with errors. Since the allowed placeholder is not in the raw input.
 So we get are going to get a list of errors when parsing
+
 ```ruby
   template = SimpleTemplates.parse("Hi <name>", %w[date])
   template.errors
   => [...] # unknown placeholder
 ```
 
-##Tasks
+## Tasks
+
 The default task executed by `rake` is only
+
 ```
 rake test
 ```
 
 Additionally you can generate the documentation by running
+
 ```
 rake docs
 ```
 
-##License
+## License
+
 MIT. See [LICENSE](https://github.com/stackbuilders/simple_templates/blob/master/LICENSE)
