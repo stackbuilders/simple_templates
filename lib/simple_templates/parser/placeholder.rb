@@ -45,7 +45,7 @@ module SimpleTemplates
       def check_placeholder_syntax
         expected_order_with_found_tokens = EXPECTED_TAG_ORDER.zip(tag_tokens)
 
-        errors = expected_order_with_found_tokens.
+        expected_order_with_found_tokens.
                    reduce([]) do |errs, (expected_type, found_tag)|
 
           if found_tag.nil?
