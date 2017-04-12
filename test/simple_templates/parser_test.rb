@@ -90,7 +90,7 @@ describe SimpleTemplates::Parser do
 
       delim = SimpleTemplates::Delimiter.new(/\\\[\\\[/, /\\\]\\\]/, /\[\[/, /\]\]/)
 
-      ast, errors, remaining_tokens =
+      ast, _, _ =
       SimpleTemplates::Template.new(
         *SimpleTemplates::Parser.new(
           SimpleTemplates::Unescapes.new('[[', ']]'),
