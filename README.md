@@ -53,6 +53,23 @@ So we get are going to get a list of errors when parsing
   => [...] # unknown placeholder
 ```
 
+### Serialization Support
+
+You can serialize a template out of the box by calling the method `to_json`.
+
+```ruby
+  template = SimpleTemplates.parse("Hi <name>", %w[name])
+  template.to_json
+  # => "{\"ast\":[{\"contents\":\"Hi...
+```
+
+You can also deserialize a serialized template.
+
+```ruby
+  SimpleTemplates::Template.from_json(template.to_json)
+  # => #<SimpleTemplates::Template:0x007fad96056ae0...
+```
+
 ## Tasks
 
 The default task executed by `rake` is only
